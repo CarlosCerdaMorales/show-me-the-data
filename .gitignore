@@ -18,9 +18,10 @@ env/
 data/raw/*
 !data/raw/.gitkeep
 
-*.twbx
-*.hyper
-*.tde
+*.lock
+PBIDesktop/
+*.pbix
+*.pbit
 
 *.aux
 *.log
