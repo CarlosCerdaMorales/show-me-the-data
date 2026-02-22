@@ -1,19 +1,39 @@
-# Dependencias de Node (Frontend)
 node_modules/
 dist/
+build/
 .env
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Python (Backend/Scripts)
 __pycache__/
 *.py[cod]
+*$py.class
 venv/
 .venv/
 env/
+.pytest_cache/
 
-# Archivos de Sistema
+data/raw/*
+!data/raw/.gitkeep
+
+*.twbx
+*.hyper
+*.tde
+
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
 .DS_Store
 Thumbs.db
-
-# IDEs
 .vscode/
 .idea/
+*.swp
