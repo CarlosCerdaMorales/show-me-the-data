@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import Papa from 'papaparse';
 import {
   Chart as ChartJS,
@@ -7,6 +7,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -17,44 +18,37 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 );
 
-const VentasChartJS = () => {
+const SalesChartJS = ({ tipoVista = 'line' }) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
   });
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Papa.parse('/ventas_tienda_online.csv', {
       download: true,
       header: true,
-      delimiter: ";",
-      skipEmptyLines: true,
+      delimiter: ";", 
+      skipEmptyLines: true, 
       complete: (results) => {
         const data = results.data;
         const ventasPorMes = {};
 
         data.forEach((row) => {
           if (row.Fecha && row.Ventas_Totales) {
-            
             const ventaString = row.Ventas_Totales.replace(',', '.');
             const venta = parseFloat(ventaString);
-
             if (isNaN(venta)) return;
 
             const mes = row.Fecha.substring(0, 7); 
-            
-            if (ventasPorMes[mes]) {
-              ventasPorMes[mes] += venta;
-            } else {
-              ventasPorMes[mes] = venta;
-            }
+            ventasPorMes[mes] = (ventasPorMes[mes] || 0) + venta;
           }
         });
 
@@ -65,29 +59,37 @@ const VentasChartJS = () => {
           labels: etiquetas,
           datasets: [
             {
-              label: 'Ventas Totales (Chart.js)',
+              label: tipoVista === 'line' ? 'Tendencia de Ventas' : 'Comparativa Mensual',
               data: valores,
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              borderColor: tipoVista === 'line' ? 'rgb(53, 162, 235)' : 'rgb(255, 99, 132)',
+              backgroundColor: tipoVista === 'line' ? 'rgba(53, 162, 235, 0.5)' : 'rgba(255, 99, 132, 0.5)',
+              tension: 0.3,
             },
           ],
         });
         setLoading(false);
       },
     });
-  }, []);
+  }, [tipoVista]);
 
   const options = {
     responsive: true,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Ventas 2025 (Datos Sincronizados)' },
+      title: { 
+        display: true, 
+        text: tipoVista === 'line' 
+          ? 'Análisis de Tendencia (Serie Temporal Continua)' 
+          : 'Comparación Discreta (Valores Individuales)' 
+      },
     },
   };
 
   if (loading) return <p>Cargando datos...</p>;
 
-  return <Line options={options} data={chartData} />;
+  return tipoVista === 'line' 
+    ? <Line options={options} data={chartData} /> 
+    : <Bar options={options} data={chartData} />;
 };
 
-export default VentasChartJS;
+export default SalesChartJS;

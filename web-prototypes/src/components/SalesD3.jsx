@@ -77,6 +77,7 @@ const VentasD3 = () => {
         .attr("y", -5)
         .attr("text-anchor", "middle")
         .style("font-size", "14px")
+        .attr("fill", "white")
         .text("Ventas 2025 (D3.js - SVG Puro)");
 
   }, [data]);
