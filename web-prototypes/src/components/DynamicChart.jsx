@@ -1,4 +1,5 @@
-import { Line, Bar } from 'react-chartjs-2';
+import React from 'react';
+import { Line, Bar, Scatter } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,27 +24,36 @@ ChartJS.register(
 );
 
 const DynamicChart = ({ config }) => {
-  if (!config) return null;
-  const dataConDatos = {
-    ...config.data,
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-    datasets: [
-      {
-        label: 'Ventas Reales',
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: config.type === 'bar' ? 'rgba(75, 192, 192, 0.5)' : 'rgba(75, 192, 192, 1)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
+  if (!config || !config.data) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+        Cargando datos de la gráfica...
+      </div>
+    );
+  }
+
+  const containerStyle = {
+    width: '100%',
+    height: '400px',
+    position: 'relative'
   };
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
-      {config.type === 'line' ? (
-        <Line data={dataConDatos} options={config.options} />
-      ) : (
-        <Bar data={dataConDatos} options={config.options} />
+    <div style={containerStyle}>
+      {config.type === 'line' && (
+        <Line data={config.data} options={config.options} />
+      )}
+      
+      {(config.type === 'bar' || config.type === 'bar-stacked') && (
+        <Bar data={config.data} options={config.options} />
+      )}
+
+      {config.type === 'scatter' && (
+        <Scatter data={config.data} options={config.options} />
+      )}
+
+      {!['line', 'bar', 'bar-stacked', 'scatter'].includes(config.type) && (
+        <Bar data={config.data} options={config.options} />
       )}
     </div>
   );
