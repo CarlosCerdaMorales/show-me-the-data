@@ -40,6 +40,6 @@ output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw')
 os.makedirs(output_dir, exist_ok=True)
 file_name = os.path.join(output_dir, 'ventas_tienda_online.csv')
 
-df.to_csv(file_name, index=False, sep=';', decimal=',')
+df.to_csv(file_name, index=False, sep=';', decimal=',', date_format='%d-%m-%Y')
 
 print(f"Dataset generado en: {file_name}")
