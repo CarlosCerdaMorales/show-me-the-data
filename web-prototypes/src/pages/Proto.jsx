@@ -89,13 +89,14 @@ const Proto = () => {
 
       {step === 3 && (
         <StepMapping 
-            columns={csvData?.columns || []}
+          csvData={csvData} // ESTO ES CLAVE: Pasamos el objeto que tiene .columns y .types
+          columns={csvData?.columns || []} // También pasamos las columnas sueltas para tu select
           mapping={mapping}
           setMapping={setMapping}
           onGenerate={handleGenerateChart}
-          onBack={() => setStep(2)}
           selectedRelationship={selectedRelationship}
           selectedIntent={selectedIntent}
+          onBack={() => setStep(2)}
           loading={loading}
         />
       )}
