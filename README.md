@@ -5,7 +5,7 @@
 
 ## 1. Abstract
 
-This project is a Bachelor's Thesis (Trabajo de Fin de Grado) focused on Data Visualization from three distinct perspectives: **technical, communicative, and ethical**[cite: 6].
+This project is a Bachelor's Thesis (Trabajo de Fin de Grado) focused on Data Visualization from three distinct perspectives: **technical, communicative, and ethical**.
 
 The main goal is to analyze and compare leading visualization tools (D3.js, Chart.js, Power BI) to identify best practices and potential pitfalls that lead to data misinterpretation. The project moves beyond theory by developing a **visualization recommendation prototype** that suggests and generates the optimal chart type based on input data and user intent.
 
