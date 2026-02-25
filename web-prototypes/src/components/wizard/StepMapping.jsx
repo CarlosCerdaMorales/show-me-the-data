@@ -14,11 +14,10 @@ const StepMapping = ({
   loading 
 }) => {
   const [granularity, setGranularity] = useState('month_year');
-  
-  // Si csvData llega vacío, intentamos sacarlo de lo que haya
+  const [aggregation, setAggregation] = useState('sum');
+
   const types = csvData?.types || {};
 
-  // --- REGLAS DE DETECCIÓN MEJORADAS ---
   const isNumeric = (col) => {
     const t = (types[col] || '').toLowerCase();
     return t.includes('int') || t.includes('float') || t.includes('num') || t.includes('double');
@@ -29,7 +28,6 @@ const StepMapping = ({
     return t.includes('fech') || t.includes('date') || t.includes('time');
   };
 
-  // Validaciones
   const validX = mapping.xColumn ? (isDate(mapping.xColumn) || !isNumeric(mapping.xColumn)) : true;
   const validY = mapping.yColumn ? isNumeric(mapping.yColumn) : true;
 
@@ -47,7 +45,7 @@ const StepMapping = ({
         mapping: {
           x: mapping.xColumn,
           y: mapping.yColumn,
-          aggregate: "sum",
+          aggregate: aggregation,
           granularity: isDate(mapping.xColumn) ? granularity : null
         }
       }
@@ -70,30 +68,21 @@ const StepMapping = ({
         <div style={{ flex: 1 }}>
           <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '12px', border: '1px solid #eee' }}>
             
-            {/* EJE X */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>
-                Eje X (Categorías / Tiempo):
-              </label>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>Eje X (Dimensión):</label>
               <select 
                 value={mapping.xColumn || ''} 
                 onChange={(e) => setMapping({...mapping, xColumn: e.target.value})}
                 style={{ width: '100%', padding: '12px', borderRadius: '6px', border: mapping.xColumn && !validX ? '2px solid #dc3545' : '1px solid #ccc' }}
               >
                 <option value="">Selecciona columna...</option>
-                {columns.map(col => (
-                  <option key={col} value={col}>
-                    {col} {types[col] ? `(${types[col]})` : ''}
-                  </option>
-                ))}
+                {columns.map(col => <option key={col} value={col}>{col} {types[col] ? `(${types[col]})` : ''}</option>)}
               </select>
-              {mapping.xColumn && !validX && <small style={{ color: '#dc3545' }}>Debe ser una categoría o fecha.</small>}
             </div>
 
-            {/* GRANULARIDAD */}
             {isDate(mapping.xColumn) && (
-              <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e7f1ff', borderRadius: '8px', border: '1px solid #b6d4fe' }}>
-                <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#084298' }}>Agrupar por:</label>
+              <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e7f1ff', borderRadius: '8px' }}>
+                <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#084298' }}>Temporalidad:</label>
                 <select value={granularity} onChange={(e) => setGranularity(e.target.value)} style={{ width: '100%', padding: '8px' }}>
                   <option value="day">Día a día</option>
                   <option value="month_year">Mes y Año</option>
@@ -102,24 +91,25 @@ const StepMapping = ({
               </div>
             )}
 
-            {/* EJE Y */}
-            <div style={{ marginBottom: '25px' }}>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>
-                Eje Y (Valores Numéricos):
-              </label>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>Eje Y (Métrica):</label>
               <select 
                 value={mapping.yColumn || ''} 
                 onChange={(e) => setMapping({...mapping, yColumn: e.target.value})}
                 style={{ width: '100%', padding: '12px', borderRadius: '6px', border: mapping.yColumn && !validY ? '2px solid #dc3545' : '1px solid #ccc' }}
               >
                 <option value="">Selecciona columna...</option>
-                {columns.map(col => (
-                  <option key={col} value={col}>
-                    {col} {types[col] ? `(${types[col]})` : ''}
-                  </option>
-                ))}
+                {columns.map(col => <option key={col} value={col}>{col} {types[col] ? `(${types[col]})` : ''}</option>)}
               </select>
-              {mapping.yColumn && !validY && <small style={{ color: '#dc3545' }}>Debe ser un valor numérico.</small>}
+            </div>
+
+            <div style={{ marginBottom: '25px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '8px', border: '1px solid #ffeeba' }}>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#856404' }}>Operación matemática:</label>
+              <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+                <option value="sum">Sumar valores</option>
+                <option value="mean">Calcular Promedio</option>
+                <option value="count">Contar registros</option>
+              </select>
             </div>
 
             <button 
