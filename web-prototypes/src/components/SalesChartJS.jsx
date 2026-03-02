@@ -42,27 +42,22 @@ const SalesChartJS = ({ tipoVista = 'line' }) => {
         const ventasPorMes = {};
 
         data.forEach((row) => {
-          // Validamos que existan los campos necesarios
           if (row.Fecha && row.Ventas_Totales) {
             
-            // 1. Limpieza de valor monetario (coma a punto)
             const ventaString = row.Ventas_Totales.replace(',', '.');
             const venta = parseFloat(ventaString);
             
             if (isNaN(venta)) return;
 
-            // 2. Parseo de Fecha: DD-MM-YYYY -> YYYY-MM
-            const partesFecha = row.Fecha.split('-'); // ['10', '03', '2025']
+            const partesFecha = row.Fecha.split('-'); 
             
             if (partesFecha.length === 3) {
-                // Creamos una clave ordenable: "2025-03"
                 const keyMes = `${partesFecha[2]}-${partesFecha[1]}`;
                 ventasPorMes[keyMes] = (ventasPorMes[keyMes] || 0) + venta;
             }
           }
         });
 
-        // 3. Ordenar las claves (YYYY-MM) para que el gráfico salga cronológico
         const etiquetas = Object.keys(ventasPorMes).sort();
         const valores = etiquetas.map(mes => ventasPorMes[mes]);
 

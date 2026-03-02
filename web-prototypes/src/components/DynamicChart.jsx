@@ -9,11 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler // Importante para el 'fill: true' (ShowEvolution)
+  Filler
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 
-// Registramos todos los componentes necesarios
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,9 +27,6 @@ ChartJS.register(
 
 const DynamicChart = ({ config }) => {
   if (!config) return <p>Cargando visualización...</p>;
-
-  // Chart.js necesita que 'type' sea minúscula ('line', 'bar')
-  // Nuestra plantilla ya lo devuelve así, perfecto.
 
   return (
     <div style={{ position: 'relative', height: '400px', width: '100%' }}>
