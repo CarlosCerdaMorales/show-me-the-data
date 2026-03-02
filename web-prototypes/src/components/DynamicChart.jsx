@@ -1,5 +1,4 @@
 import React from 'react';
-import { Line, Bar, Scatter } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,8 +9,11 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler // Importante para el 'fill: true' (ShowEvolution)
 } from 'chart.js';
+import { Chart } from 'react-chartjs-2';
 
+// Registramos todos los componentes necesarios
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,41 +22,23 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 const DynamicChart = ({ config }) => {
-  if (!config || !config.data) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-        Cargando datos de la gráfica...
-      </div>
-    );
-  }
+  if (!config) return <p>Cargando visualización...</p>;
 
-  const containerStyle = {
-    width: '100%',
-    height: '400px',
-    position: 'relative'
-  };
+  // Chart.js necesita que 'type' sea minúscula ('line', 'bar')
+  // Nuestra plantilla ya lo devuelve así, perfecto.
 
   return (
-    <div style={containerStyle}>
-      {config.type === 'line' && (
-        <Line data={config.data} options={config.options} />
-      )}
-      
-      {(config.type === 'bar' || config.type === 'bar-stacked') && (
-        <Bar data={config.data} options={config.options} />
-      )}
-
-      {config.type === 'scatter' && (
-        <Scatter data={config.data} options={config.options} />
-      )}
-
-      {!['line', 'bar', 'bar-stacked', 'scatter'].includes(config.type) && (
-        <Bar data={config.data} options={config.options} />
-      )}
+    <div style={{ position: 'relative', height: '400px', width: '100%' }}>
+      <Chart
+        type={config.type} 
+        data={config.data}
+        options={config.options}
+      />
     </div>
   );
 };
