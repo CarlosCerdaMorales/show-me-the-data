@@ -1,0 +1,89 @@
+namespace VisualizationSPL
+
+features
+    Visualization
+        mandatory
+            Relationship
+                alternative
+                    Nominal
+                    TimeSeries
+                    Ranking
+                    PartToWhole
+                    Deviation
+            
+            Intention
+                alternative
+                    // Nominal
+                    CompareSizes
+
+                    // Series Temporales
+                    EmphasizeIndividual
+                    ShowEvolution
+                    IrregularIntervals
+
+                    // Ranking
+                    EmphasizeLarger
+                    EmphasizeSmaller
+                    NonZeroScale
+
+                    // Partes de un todo 
+                    TouchingBars
+                    StackedBars
+
+                    // Desviación
+                    BaseDifference
+                    DeviationOverTime
+            
+            VisualElement
+                alternative
+                    Line    // Líneas
+                    Bar     // Barras
+                    Point   // Puntos
+                    Box     // Cajas 
+
+        optional
+            GridLines
+            Stacked         // Activa el apilado en barras
+            NoGap           // Elimina el espacio entre barras (gap=0)
+            SortedDesc      // Ordenar mayor a menor
+            SortedAsc       // Ordenar menor a mayor
+
+constraints
+    // Relación -> Intenciones disponibles
+    Nominal => CompareSizes
+    TimeSeries => EmphasizeIndividual | ShowEvolution | IrregularIntervals
+    Ranking => EmphasizeLarger | EmphasizeSmaller | NonZeroScale
+    PartToWhole => TouchingBars | StackedBars
+    Deviation => BaseDifference | DeviationOverTime
+
+    // REGLA 2: Intención -> Elemento Visual y Estilo
+
+    // --- Nominal ---
+    CompareSizes => Bar
+
+    // --- Series Temporales ---
+    ShowEvolution => Line
+    EmphasizeIndividual => Bar
+    IrregularIntervals => Point
+
+    // --- Ranking ---
+    EmphasizeLarger => Bar
+    EmphasizeLarger => SortedDesc
+    
+    EmphasizeSmaller => Bar
+    EmphasizeSmaller => SortedAsc
+    
+    NonZeroScale => Point
+
+    // --- Partes de un Todo ---
+    // Opción A: Barras pegadas
+    TouchingBars => Bar
+    TouchingBars => NoGap
+
+    // Opción B: Barras apiladas
+    StackedBars => Bar
+    StackedBars => Stacked
+
+    // --- Desviación ---
+    BaseDifference => Bar
+    DeviationOverTime => Line

@@ -38,3 +38,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Archivos temporales y generados del motor UVEngine
+uvengine/tfg_test/chart_resolved.json
+uvengine/tfg_test/data_current.csv
+uvengine/tfg_test/temp_request.json
