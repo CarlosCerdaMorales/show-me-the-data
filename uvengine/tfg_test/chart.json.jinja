@@ -2,17 +2,7 @@
   "type": "{% if Line %}line{% elif Bar %}bar{% elif Point %}scatter{% elif Box %}boxplot{% else %}bar{% endif %}",
   "data": {
     "labels": {{ labels | tojson }}, 
-    "datasets": [{
-      "label": "{{ TitleText | default('Visualización') }}",
-      "data": {% if Point %}{{ scatter_data | tojson }}{% else %}{{ values | tojson }}{% endif %},
-      "backgroundColor": {{ backgroundColor | tojson }},
-      "borderColor": {{ borderColor | tojson }},
-      "borderWidth": 1,
-      "fill": false,
-      "tension": {% if ShowEvolution %}0.4{% else %}0{% endif %},
-      "pointRadius": {% if Point %}6{% else %}3{% endif %},
-      "pointHoverRadius": {% if Point %}8{% else %}4{% endif %}
-    }]
+    "datasets": {{ datasets | tojson }}
   },
   "options": {
     "responsive": true,

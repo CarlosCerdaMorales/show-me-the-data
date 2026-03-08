@@ -14,7 +14,7 @@ const Proto = () => {
   
   const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [selectedIntent, setSelectedIntent] = useState(null);
-  const [mapping, setMapping] = useState({ xColumn: '', yColumn: '' });
+  const [mapping, setMapping] = useState({ xColumn: '', yColumn: '', groupBy: '' });
   const [chartConfig, setChartConfig] = useState(null);
 
   const handleFileUpload = async (event) => {
@@ -89,8 +89,8 @@ const Proto = () => {
 
       {step === 3 && (
         <StepMapping 
-          csvData={csvData} // ESTO ES CLAVE: Pasamos el objeto que tiene .columns y .types
-          columns={csvData?.columns || []} // También pasamos las columnas sueltas para tu select
+          csvData={csvData}
+          columns={csvData?.columns || []}
           mapping={mapping}
           setMapping={setMapping}
           onGenerate={handleGenerateChart}

@@ -45,6 +45,7 @@ const StepMapping = ({
         mapping: {
           x: mapping.xColumn,
           y: mapping.yColumn,
+          groupBy: mapping.groupBy,
           aggregate: aggregation,
           granularity: isDate(mapping.xColumn) ? granularity : null
         }
@@ -58,8 +59,8 @@ const StepMapping = ({
   return (
     <div className="mapping-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: 'white' }}>3. Mapeo de Variables</h2>
-        <button onClick={onBack} style={{ color: '#ccc', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+        <h2 style={{ color: '#333' }}>3. Mapeo de Variables</h2>
+        <button onClick={onBack} style={{ color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
           ← Volver
         </button>
       </div>
@@ -88,6 +89,25 @@ const StepMapping = ({
                   <option value="month_year">Mes y Año</option>
                   <option value="year">Año completo</option>
                 </select>
+              </div>
+            )}
+
+            {selectedRelationship === 'part_to_whole' && (
+              <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
+                <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#28a745' }}>Agrupar/Apilar por (Subcategoría):</label>
+                <select 
+                  value={mapping.groupBy || ''} 
+                  onChange={(e) => setMapping({...mapping, groupBy: e.target.value})}
+                  style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc' }}
+                >
+                  <option value="">Ninguno (Gráfico simple)</option>
+                  {columns.map(col => types[col] === 'Texto/Categoría' && <option key={col} value={col}>{col}</option>)}
+                </select>
+                {csvData?.part_to_whole_suggestions && (
+                  <p style={{ fontSize: '0.85em', color: '#666', marginTop: '10px', fontStyle: 'italic' }}>
+                    Sugerencias para este CSV: {csvData.part_to_whole_suggestions.slice(0, 2).map(s => `${s.metrica} por ${s.agrupador}`).join(' o ')}
+                  </p>
+                )}
               </div>
             )}
 
@@ -127,11 +147,11 @@ const StepMapping = ({
         </div>
 
         <div style={{ flex: 1, borderLeft: '1px solid #eee', paddingLeft: '40px' }}>
-          <h4 style={{ color: 'white', marginTop: 0 }}>Recomendación:</h4>
+          <h4 style={{ color: '#333', marginTop: 0 }}>Recomendación:</h4>
           {recommendation && (
             <div style={{ textAlign: 'center' }}>
               <img src={recommendation.image} alt="preview" style={{ maxWidth: '100%', borderRadius: '8px' }} />
-              <p style={{ fontWeight: 'bold', color: 'white', marginTop: '10px' }}>{recommendation.label}</p>
+              <p style={{ fontWeight: 'bold', color: '#333', marginTop: '10px' }}>{recommendation.label}</p>
             </div>
           )}
         </div>
