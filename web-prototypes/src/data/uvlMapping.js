@@ -22,7 +22,6 @@ export const UVL_FEATURES = {
   'deviation_over_time': 'DeviationOverTime',
   'dist_simple_count': 'DistSimpleCount',
   'dist_simple_shape': 'DistSimpleShape',
-  'dist_simple_points': 'DistSimplePoints',
   'dist_multiple_shape': 'DistMultipleShape',
   'dist_multiple_boxes': 'DistMultipleBoxes',
   'dist_multiple_points': 'DistMultiplePoints',

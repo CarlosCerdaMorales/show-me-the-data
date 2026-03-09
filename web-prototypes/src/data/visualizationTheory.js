@@ -62,7 +62,6 @@ export const RELATIONSHIPS_THEORY = {
       intents: [
         { id: 'dist_simple_count', label: 'Simple: Enfatizar cantidad por intervalo (Histograma)' },
         { id: 'dist_simple_shape', label: 'Simple: Enfatizar forma de la distribución (Polígono)' },
-        { id: 'dist_simple_points', label: 'Simple: Mostrar cada valor (Gráfico de bandas)' },
         { id: 'dist_multiple_shape', label: 'Múltiple: Comparar formas (Líneas)' },
         { id: 'dist_multiple_boxes', label: 'Múltiple: Comparar estadísticas clave (Cajas y Bigotes)' },
         { id: 'dist_multiple_points', label: 'Múltiple: Comparar valores individuales (Bandas Múltiples)' }
@@ -168,12 +167,6 @@ export const RECOMMENDED_VISUALS = {
     label: 'Polígono de Frecuencias', 
     image: imgLineTrend,
     desc: 'Línea que llama la atención sobre la forma total de la distribución.' 
-  },
-  'dist_simple_points': { 
-    type: 'scatter', 
-    label: 'Gráfico de Bandas', 
-    image: imgScatter,
-    desc: 'Muestra la posición exacta de cada valor individual.' 
   },
   'dist_multiple_shape': { 
     type: 'line', 

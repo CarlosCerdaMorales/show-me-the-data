@@ -39,7 +39,6 @@ features
                     // Distribución
                     DistSimpleCount
                     DistSimpleShape
-                    DistSimplePoints
                     DistMultipleShape
                     DistMultipleBoxes
                     DistMultiplePoints
@@ -69,7 +68,7 @@ constraints
     Ranking => EmphasizeLarger | EmphasizeSmaller | NonZeroScale
     PartToWhole => TouchingBars | StackedBars
     Deviation => BaseDifference | DeviationOverTime
-    Distribution => DistSimpleCount | DistSimpleShape | DistSimplePoints | DistMultipleShape | DistMultipleBoxes | DistMultiplePoints
+    Distribution => DistSimpleCount | DistSimpleShape | DistMultipleShape | DistMultipleBoxes | DistMultiplePoints
     Correlation => CorrStandard | CorrTableLens
 
     // REGLA 2: Intención -> Elemento Visual y Estilo
@@ -107,7 +106,6 @@ constraints
     // --- Distribución ---
     DistSimpleCount => Bar
     DistSimpleShape => Line
-    DistSimplePoints => Point
     DistMultipleShape => Line
     DistMultipleBoxes => Box
     DistMultiplePoints => Point

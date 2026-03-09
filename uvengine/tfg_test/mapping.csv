@@ -19,7 +19,6 @@ BaseDifference,DeviationStrategy,Ref:Baseline
 DeviationOverTime,DeviationStrategy,Ref:Previous
 DistSimpleCount,DistributionStrategy,Type:SimpleCount
 DistSimpleShape,DistributionStrategy,Type:SimpleShape
-DistSimplePoints,DistributionStrategy,Type:SimplePoints
 DistMultipleShape,DistributionStrategy,Type:MultipleShape
 DistMultipleBoxes,DistributionStrategy,Type:MultipleBoxes
 DistMultiplePoints,DistributionStrategy,Type:MultiplePoints
