@@ -4,6 +4,8 @@ TimeSeries,RelationshipManager,DataType:TimeSeries
 Ranking,RelationshipManager,DataType:Ranking
 PartToWhole,RelationshipManager,DataType:PartToWhole
 Deviation,RelationshipManager,DataType:Deviation
+Distribution,RelationshipManager,DataType:Distribution
+Correlation,RelationshipManager,DataType:Correlation
 CompareSizes,IntentionStrategy,Strategy:Compare
 EmphasizeIndividual,IntentionStrategy,Strategy:FocusItem
 ShowEvolution,IntentionStrategy,Strategy:Trend
@@ -15,6 +17,14 @@ TouchingBars,LayoutManager,BarSpacing:None
 StackedBars,LayoutManager,GroupMode:Stacked
 BaseDifference,DeviationStrategy,Ref:Baseline
 DeviationOverTime,DeviationStrategy,Ref:Previous
+DistSimpleCount,DistributionStrategy,Type:SimpleCount
+DistSimpleShape,DistributionStrategy,Type:SimpleShape
+DistSimplePoints,DistributionStrategy,Type:SimplePoints
+DistMultipleShape,DistributionStrategy,Type:MultipleShape
+DistMultipleBoxes,DistributionStrategy,Type:MultipleBoxes
+DistMultiplePoints,DistributionStrategy,Type:MultiplePoints
+CorrStandard,CorrelationStrategy,Type:Standard
+CorrTableLens,CorrelationStrategy,Type:TableLens
 Line,ChartRenderer,Type:LineChart
 Bar,ChartRenderer,Type:BarChart
 Point,ChartRenderer,Type:ScatterPlot

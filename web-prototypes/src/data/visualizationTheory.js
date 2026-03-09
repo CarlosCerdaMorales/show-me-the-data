@@ -5,6 +5,8 @@ import imgLineTrend from '../assets/chart-icons/line-trend.png';
 import imgScatter from '../assets/chart-icons/scatter.png';
 import imgBarStacked from '../assets/chart-icons/bar-stacked.png';
 import imgBarDiverging from '../assets/chart-icons/bar-diverging.png';
+import imgBoxplot from '../assets/chart-icons/boxplot.png'; 
+import imgTableLens from '../assets/chart-icons/table-lens.png';
 
 export const RELATIONSHIPS_THEORY = {
     nominal: {
@@ -51,6 +53,28 @@ export const RELATIONSHIPS_THEORY = {
       intents: [
         { id: 'base_difference', label: 'Diferencias respecto a una base (Barras divergentes)' },
         { id: 'deviation_over_time', label: 'Desviación a lo largo del tiempo (Líneas con base)' }
+      ]
+    },
+    distribution: {
+      id: 'distribution',
+      label: 'Distribuciones',
+      description: 'Muestra cómo los valores cuantitativos se distribuyen a lo largo de su rango.',
+      intents: [
+        { id: 'dist_simple_count', label: 'Simple: Enfatizar cantidad por intervalo (Histograma)' },
+        { id: 'dist_simple_shape', label: 'Simple: Enfatizar forma de la distribución (Polígono)' },
+        { id: 'dist_simple_points', label: 'Simple: Mostrar cada valor (Gráfico de bandas)' },
+        { id: 'dist_multiple_shape', label: 'Múltiple: Comparar formas (Líneas)' },
+        { id: 'dist_multiple_boxes', label: 'Múltiple: Comparar estadísticas clave (Cajas y Bigotes)' },
+        { id: 'dist_multiple_points', label: 'Múltiple: Comparar valores individuales (Bandas Múltiples)' }
+      ]
+    },
+    correlation: {
+      id: 'correlation',
+      label: 'Correlación',
+      description: 'Relación entre dos conjuntos de valores (dirección y fuerza).',
+      intents: [
+        { id: 'corr_standard', label: 'Relación estándar entre variables (Gráfico de dispersión)' },
+        { id: 'corr_table_lens', label: 'Comparación paralela (Table Lens / Barras)' }
       ]
     }
   };
@@ -131,4 +155,56 @@ export const RECOMMENDED_VISUALS = {
     image: imgLineTrend,
     desc: 'Muestra cambios respecto a una base temporal.' 
   },
+
+  // Distribuciones
+  'dist_simple_count': { 
+    type: 'bar', 
+    label: 'Histograma', 
+    image: imgBarStandard,
+    desc: 'Barras que enfatizan el número de ocurrencias por intervalo.' 
+  },
+  'dist_simple_shape': { 
+    type: 'line', 
+    label: 'Polígono de Frecuencias', 
+    image: imgLineTrend,
+    desc: 'Línea que llama la atención sobre la forma total de la distribución.' 
+  },
+  'dist_simple_points': { 
+    type: 'scatter', 
+    label: 'Gráfico de Bandas', 
+    image: imgScatter,
+    desc: 'Muestra la posición exacta de cada valor individual.' 
+  },
+  'dist_multiple_shape': { 
+    type: 'line', 
+    label: 'Polígonos Múltiples', 
+    image: imgLineTrend,
+    desc: 'Varias líneas para comparar la forma de múltiples conjuntos.' 
+  },
+  'dist_multiple_boxes': { 
+    type: 'boxplot', 
+    label: 'Gráfico de Cajas y Bigotes', 
+    image: imgBoxplot,
+    desc: 'Compara distribuciones usando medianas, rangos y percentiles.' 
+  },
+  'dist_multiple_points': { 
+    type: 'scatter', 
+    label: 'Bandas Múltiples', 
+    image: imgScatter,
+    desc: 'Filas/columnas de puntos para comparar conjuntos pequeños.' 
+  },
+
+  // Correlación
+  'corr_standard': { 
+    type: 'scatter', 
+    label: 'Gráfico de Dispersión', 
+    image: imgScatter,
+    desc: 'Relaciona dos variables cuantitativas para ver su fuerza y dirección.' 
+  },
+  'corr_table_lens': { 
+    type: 'bar', 
+    label: 'Table Lens', 
+    image: imgTableLens,
+    desc: 'Dos gráficos de barras en paralelo para comparar variables.' 
+  }
 };
