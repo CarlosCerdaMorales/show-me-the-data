@@ -2,7 +2,7 @@ import traceback
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from chart_logic import analyze_csv_file, process_and_run_engine, UPLOADED_CSV_PATH
+from chart_logic import CSVAnalyzer, ChartEngineOrchestrator, UPLOADED_CSV_PATH
 
 app = Flask(__name__)
 CORS(app)
@@ -19,7 +19,7 @@ def upload_csv():
     try:
         file.save(UPLOADED_CSV_PATH)
         
-        columns, preview, types, total_rows, pt_suggestions = analyze_csv_file(UPLOADED_CSV_PATH)
+        columns, preview, types, total_rows, pt_suggestions = CSVAnalyzer.analyze(UPLOADED_CSV_PATH)
         
         return jsonify({
             "columns": columns,
@@ -37,7 +37,7 @@ def upload_csv():
 @app.route('/generate-chart', methods=['POST'])
 def generate_chart():
     try:
-        resolved_chart_json = process_and_run_engine(request.json)
+        resolved_chart_json = ChartEngineOrchestrator.process_and_run(request.json)
         return jsonify(resolved_chart_json)
 
     except Exception as e:

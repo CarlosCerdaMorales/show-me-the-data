@@ -30,6 +30,7 @@ const StepMapping = ({
 
   const validX = mapping.xColumn ? (isDate(mapping.xColumn) || !isNumeric(mapping.xColumn)) : true;
   const validY = mapping.yColumn ? isNumeric(mapping.yColumn) : true;
+  const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
 
   const handleGenerate = () => {
     const request_from_frontend = {
@@ -46,6 +47,7 @@ const StepMapping = ({
           x: mapping.xColumn,
           y: mapping.yColumn,
           groupBy: mapping.groupBy,
+          threshold: mapping.threshold ? parseFloat(mapping.threshold) : null,
           aggregate: aggregation,
           granularity: isDate(mapping.xColumn) ? granularity : null
         }
@@ -103,11 +105,6 @@ const StepMapping = ({
                   <option value="">Ninguno (Gráfico simple)</option>
                   {columns.map(col => types[col] === 'Texto/Categoría' && <option key={col} value={col}>{col}</option>)}
                 </select>
-                {csvData?.part_to_whole_suggestions && (
-                  <p style={{ fontSize: '0.85em', color: '#666', marginTop: '10px', fontStyle: 'italic' }}>
-                    Sugerencias para este CSV: {csvData.part_to_whole_suggestions.slice(0, 2).map(s => `${s.metrica} por ${s.agrupador}`).join(' o ')}
-                  </p>
-                )}
               </div>
             )}
 
@@ -123,6 +120,20 @@ const StepMapping = ({
               </select>
             </div>
 
+            {selectedRelationship === 'deviation' && (
+              <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8d7da', borderRadius: '8px', border: '1px solid #f5c6cb' }}>
+                <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#721c24' }}>Valor de Referencia (Umbral):</label>
+                <input 
+                  type="number" 
+                  value={mapping.threshold || ''}
+                  onChange={(e) => setMapping({...mapping, threshold: e.target.value})}
+                  placeholder="Ej: 1000"
+                  style={{ width: '100%', padding: '12px', borderRadius: '6px', border: !validThreshold ? '2px solid #dc3545' : '1px solid #ccc' }}
+                />
+                <p style={{ fontSize: '0.85em', color: '#721c24', marginTop: '10px', margin: 0 }}>Se dibujará una línea base en este valor.</p>
+              </div>
+            )}
+
             <div style={{ marginBottom: '25px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '8px', border: '1px solid #ffeeba' }}>
               <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px', color: '#856404' }}>Operación matemática:</label>
               <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} style={{ width: '100%', padding: '8px' }}>
@@ -134,10 +145,10 @@ const StepMapping = ({
 
             <button 
               onClick={handleGenerate}
-              disabled={!mapping.xColumn || !mapping.yColumn || !validX || !validY || loading}
+              disabled={!mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading}
               style={{
                 width: '100%', padding: '15px', borderRadius: '8px', fontWeight: 'bold',
-                backgroundColor: (!mapping.xColumn || !mapping.yColumn || !validX || !validY || loading) ? '#ccc' : '#28a745',
+                backgroundColor: (!mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading) ? '#ccc' : '#28a745',
                 color: 'white', border: 'none', cursor: 'pointer'
               }}
             >
