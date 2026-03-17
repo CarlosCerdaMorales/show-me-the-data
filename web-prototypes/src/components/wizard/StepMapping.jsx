@@ -63,8 +63,8 @@ const StepMapping = ({
   return (
     <div className="mapping-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: '#333' }}>3. Mapeo de Variables</h2>
-        <button onClick={onBack} style={{ color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+        <h2 style={{ color: '#ffffff' }}>3. Mapeo de Variables</h2>
+        <button onClick={onBack} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
           ← Volver
         </button>
       </div>
@@ -159,12 +159,12 @@ const StepMapping = ({
         </div>
 
         <div style={{ flex: 1, borderLeft: '1px solid #eee', paddingLeft: '40px' }}>
-          <h4 style={{ color: '#333', marginTop: 0 }}>Recomendación:</h4>
+          <h4 style={{ color: '#ffffff', marginTop: 0 }}>Recomendación:</h4>
           {recommendation && (
             <div style={{ textAlign: 'center' }}>
               <img src={recommendation.image} alt="preview" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
-              <p style={{ fontWeight: 'bold', color: '#333', marginTop: '10px' }}>{recommendation.label}</p>
-              <p style={{ fontSize: '0.9em', color: '#666' }}>{recommendation.desc}</p>
+              <p style={{ fontWeight: 'bold', color: '#ffffff', marginTop: '10px' }}>{recommendation.label}</p>
+              <p style={{ fontSize: '0.9em', color: '#ffffff' }}>{recommendation.desc}</p>
             </div>
           )}
         </div>

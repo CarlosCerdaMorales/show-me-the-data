@@ -14,7 +14,7 @@ const StepIntent = ({
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>Define tu Objetivo</h2>
-        <button onClick={onBack} style={{ color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+        <button onClick={onBack} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
           ← Volver a los datos
         </button>
       </div>
