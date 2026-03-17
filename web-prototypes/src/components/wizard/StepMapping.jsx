@@ -32,6 +32,8 @@ const StepMapping = ({
   const validY = mapping.yColumn ? isNumeric(mapping.yColumn) : true;
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
 
+  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading;
+
   const handleGenerate = () => {
     const request_from_frontend = {
       file: "visualization.uvl",
@@ -130,7 +132,6 @@ const StepMapping = ({
                   placeholder="Ej: 1000"
                   style={{ width: '100%', padding: '12px', borderRadius: '6px', border: !validThreshold ? '2px solid #dc3545' : '1px solid #ccc' }}
                 />
-                <p style={{ fontSize: '0.85em', color: '#721c24', marginTop: '10px', margin: 0 }}>Se dibujará una línea base en este valor.</p>
               </div>
             )}
 
@@ -145,11 +146,11 @@ const StepMapping = ({
 
             <button 
               onClick={handleGenerate}
-              disabled={!mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading}
+              disabled={disableGenerate}
               style={{
                 width: '100%', padding: '15px', borderRadius: '8px', fontWeight: 'bold',
-                backgroundColor: (!mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading) ? '#ccc' : '#28a745',
-                color: 'white', border: 'none', cursor: 'pointer'
+                backgroundColor: disableGenerate ? '#ccc' : '#28a745',
+                color: 'white', border: 'none', cursor: disableGenerate ? 'not-allowed' : 'pointer'
               }}
             >
               {loading ? 'Generando...' : 'Generar Visualización Final'}
@@ -161,8 +162,9 @@ const StepMapping = ({
           <h4 style={{ color: '#333', marginTop: 0 }}>Recomendación:</h4>
           {recommendation && (
             <div style={{ textAlign: 'center' }}>
-              <img src={recommendation.image} alt="preview" style={{ maxWidth: '100%', borderRadius: '8px' }} />
+              <img src={recommendation.image} alt="preview" style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
               <p style={{ fontWeight: 'bold', color: '#333', marginTop: '10px' }}>{recommendation.label}</p>
+              <p style={{ fontSize: '0.9em', color: '#666' }}>{recommendation.desc}</p>
             </div>
           )}
         </div>

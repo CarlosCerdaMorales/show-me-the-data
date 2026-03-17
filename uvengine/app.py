@@ -19,14 +19,15 @@ def upload_csv():
     try:
         file.save(UPLOADED_CSV_PATH)
         
-        columns, preview, types, total_rows, pt_suggestions = CSVAnalyzer.analyze(UPLOADED_CSV_PATH)
+        columns, preview, types, total_rows, pt_suggestions, unique_categories = CSVAnalyzer.analyze(UPLOADED_CSV_PATH)
         
         return jsonify({
             "columns": columns,
             "preview": preview,
             "types": types,
             "total_rows": total_rows,
-            "part_to_whole_suggestions": pt_suggestions
+            "part_to_whole_suggestions": pt_suggestions,
+            "unique_categories": unique_categories
         })
 
     except Exception as e:

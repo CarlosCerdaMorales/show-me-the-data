@@ -10,8 +10,6 @@ features
                     Ranking
                     PartToWhole
                     Deviation
-                    Distribution
-                    Correlation
             
             Intention
                 alternative
@@ -35,17 +33,6 @@ features
                     // Desviación
                     BaseDifference
                     DeviationOverTime
-
-                    // Distribución
-                    DistSimpleCount
-                    DistSimpleShape
-                    DistMultipleShape
-                    DistMultipleBoxes
-                    DistMultiplePoints
-
-                    // Correlación
-                    CorrStandard
-                    CorrTableLens
             
             VisualElement
                 alternative
@@ -68,8 +55,6 @@ constraints
     Ranking => EmphasizeLarger | EmphasizeSmaller | NonZeroScale
     PartToWhole => TouchingBars | StackedBars
     Deviation => BaseDifference | DeviationOverTime
-    Distribution => DistSimpleCount | DistSimpleShape | DistMultipleShape | DistMultipleBoxes | DistMultiplePoints
-    Correlation => CorrStandard | CorrTableLens
 
     // REGLA 2: Intención -> Elemento Visual y Estilo
 
@@ -102,14 +87,3 @@ constraints
     // --- Desviación ---
     BaseDifference => Bar
     DeviationOverTime => Line
-
-    // --- Distribución ---
-    DistSimpleCount => Bar
-    DistSimpleShape => Line
-    DistMultipleShape => Line
-    DistMultipleBoxes => Box
-    DistMultiplePoints => Point
-
-    // --- Correlación ---
-    CorrStandard => Point
-    CorrTableLens => Bar

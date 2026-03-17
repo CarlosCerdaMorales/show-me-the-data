@@ -17,13 +17,6 @@ TouchingBars,LayoutManager,BarSpacing:None
 StackedBars,LayoutManager,GroupMode:Stacked
 BaseDifference,DeviationStrategy,Ref:Baseline
 DeviationOverTime,DeviationStrategy,Ref:Previous
-DistSimpleCount,DistributionStrategy,Type:SimpleCount
-DistSimpleShape,DistributionStrategy,Type:SimpleShape
-DistMultipleShape,DistributionStrategy,Type:MultipleShape
-DistMultipleBoxes,DistributionStrategy,Type:MultipleBoxes
-DistMultiplePoints,DistributionStrategy,Type:MultiplePoints
-CorrStandard,CorrelationStrategy,Type:Standard
-CorrTableLens,CorrelationStrategy,Type:TableLens
 Line,ChartRenderer,Type:LineChart
 Bar,ChartRenderer,Type:BarChart
 Point,ChartRenderer,Type:ScatterPlot

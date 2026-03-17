@@ -3,7 +3,9 @@ import json
 import subprocess
 import sys
 import pandas as pd
+import numpy as np
 
+# --- CONFIGURACIÓN DE RUTAS ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "tfg_test")
 os.makedirs(MODEL_DIR, exist_ok=True)
@@ -16,24 +18,19 @@ OUTPUT_FILE = os.path.join(MODEL_DIR, "chart_resolved.json")
 UPLOADED_CSV_PATH = os.path.join(MODEL_DIR, "data_current.csv")
 
 FEW_PALETTE = [
-    (140, 140, 140), # Gris
-    (93, 165, 218),  # Azul
-    (250, 164, 58),  # Naranja
-    (96, 189, 104),  # Verde
-    (241, 124, 176), # Rosa
-    (178, 145, 47),  # Marrón
-    (178, 118, 178), # Morado
-    (222, 207, 63),  # Amarillo
-    (241, 88, 84)    # Rojo
+    (140, 140, 140), # 0: Gris
+    (93, 165, 218),  # 1: Azul
+    (250, 164, 58),  # 2: Naranja
+    (96, 189, 104),  # 3: Verde
+    (241, 124, 176), # 4: Rosa
+    (178, 145, 47),  # 5: Marrón
+    (178, 118, 178), # 6: Morado
+    (222, 207, 63),  # 7: Amarillo
+    (241, 88, 84)    # 8: Rojo
 ]
 
 
 class CSVAnalyzer:
-    """
-    Clase encargada de leer y analizar la estructura, tipos de datos
-    y posibles agrupaciones lógicas de los archivos CSV subidos.
-    """
-    
     @classmethod
     def _load_csv(cls, filepath):
         try:
@@ -73,19 +70,23 @@ class CSVAnalyzer:
         return suggestions
 
     @classmethod
+    def _get_unique_categories(cls, df, column_types):
+        unique_vals = {}
+        for col, t in column_types.items():
+            if t == 'Texto/Categoría':
+                unique_vals[col] = df[col].dropna().unique().tolist()
+        return unique_vals
+
+    @classmethod
     def analyze(cls, filepath):
         df = cls._load_csv(filepath)
         column_types = cls._detect_column_types(df)
         pt_suggestions = cls._generate_part_to_whole_suggestions(column_types)
-        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df), pt_suggestions
+        unique_categories = cls._get_unique_categories(df, column_types)
+        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df), pt_suggestions, unique_categories
 
 
 class ChartDataProcessor:
-    """
-    Clase dedicada a la limpieza, transformación y formateo de datos con Pandas.
-    Prepara los datasets finales (con colores y tamaños) que consumirá Chart.js.
-    """
-    
     @classmethod
     def autocomplete_uvl_config(cls, config):
         completed_config = config.copy()
@@ -199,11 +200,6 @@ class ChartDataProcessor:
 
 
 class ChartEngineOrchestrator:
-    """
-    Clase principal que coordina el flujo completo: recibe la petición de la API,
-    delega el trabajo a las clases de procesamiento, y finalmente ejecuta UVEngine.
-    """
-    
     @classmethod
     def _execute_uvengine(cls, user_input):
         with open(TEMP_REQUEST_FILE, 'w', encoding='utf-8') as f:
@@ -239,17 +235,17 @@ class ChartEngineOrchestrator:
         granularity = mapping.get('granularity')
         agg_func = mapping.get('aggregate', 'sum')
 
-        df = pd.read_csv(UPLOADED_CSV_PATH, sep=None, engine='python')
+        df = CSVAnalyzer._load_csv(UPLOADED_CSV_PATH)
         
         if x_col not in df.columns or y_col not in df.columns:
-             raise ValueError(f"Las columnas {x_col} o {y_col} no existen en el CSV cargado.")
+             raise ValueError(f"Las columnas '{x_col}' o '{y_col}' no existen en el CSV.")
 
+        cols_needed = [x_col, y_col]
+        if group_by:
+            cols_needed.append(group_by)
+            
+        df_clean = ChartDataProcessor.clean_and_format_dates(df[cols_needed], x_col, granularity)
         config = ChartDataProcessor.autocomplete_uvl_config(config)
-
-        cols_to_keep = [x_col, y_col]
-        if group_by: cols_to_keep.append(group_by)
-        
-        df_clean = ChartDataProcessor.clean_and_format_dates(df[cols_to_keep], x_col, granularity)
 
         if group_by and config.get('PartToWhole'):
             labels, datasets = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity)

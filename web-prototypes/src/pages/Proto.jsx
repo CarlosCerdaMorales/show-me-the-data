@@ -14,7 +14,7 @@ const Proto = () => {
   
   const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [selectedIntent, setSelectedIntent] = useState(null);
-  const [mapping, setMapping] = useState({ xColumn: '', yColumn: '', groupBy: '', threshold: '' });
+  const [mapping, setMapping] = useState({ xColumn: '', yColumn: '', groupBy: '', threshold: '', bins: 10, selectedGroups: [] });
   const [chartConfig, setChartConfig] = useState(null);
 
   const handleFileUpload = async (event) => {

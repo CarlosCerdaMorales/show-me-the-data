@@ -7,6 +7,7 @@
   "options": {
     "responsive": true,
     "maintainAspectRatio": false,
+    "indexAxis": "{% if Horizontal %}y{% else %}x{% endif %}",
     "scales": {
       "y": {
         "beginAtZero": {% if NonZeroScale %}false{% else %}true{% endif %},
