@@ -22,57 +22,62 @@ const StepResult = ({ chartConfig, onBack }) => {
   };
 
   return (
-    <div className="step-result-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+    <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
-          <h2 className="heading-main">Resultado de Visualización</h2>
-          <p className="text-muted">La gráfica se ha generado siguiendo los principios de Stephen Few.</p>
+          <h2 style={{ color: '#111827', margin: '0 0 8px 0', fontSize: '24px', fontWeight: '600' }}>Visualización Generada</h2>
+          <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>Basada en la configuración derivada de la línea de productos de software.</p>
         </div>
-        <button onClick={onBack} className="btn-link" style={{ color: 'var(--text-secondary)', cursor: 'pointer', background: 'none', border: 'none' }}>
-          ← Ajustar variables
+        <button onClick={onBack} style={{ color: '#4f46e5', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+          ← Modificar variables
         </button>
       </div>
 
       {chartConfig ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           <div 
             ref={chartRef}
             style={{ 
               backgroundColor: '#ffffff',
-              padding: '2rem',
-              borderRadius: '12px',
+              padding: '32px',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb',
               minHeight: '450px',
-              border: '1px solid var(--border-color)'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
             <DynamicChart config={chartConfig} />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button 
               onClick={downloadChart}
-              className="btn-primary"
               style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '8px',
-                backgroundColor: 'gray',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #d1d5db',
+                padding: '10px 20px',
+                borderRadius: '6px',
                 cursor: 'pointer',
-                color: 'black',
-                fontWeight: 'bold'
+                color: '#374151',
+                fontWeight: '500',
+                fontSize: '14px',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                transition: 'background-color 0.2s'
               }}
             >
-               Guardar Imagen 📷
+               Descargar PNG
             </button>
           </div>
         </div>
       ) : (
-        <div className="glass-card" style={{ textAlign: 'center', padding: '4rem', border: '1px solid var(--border-color)', borderRadius: '16px' }}>
-          <p className="text-muted">Error en la generación del JSON de configuración.</p>
+        <div style={{ textAlign: 'center', padding: '64px 32px', border: '1px dashed #d1d5db', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+          <p style={{ color: '#6b7280', margin: 0, fontWeight: '500' }}>No se pudo generar el JSON de configuración de la gráfica.</p>
         </div>
       )}
     </div>

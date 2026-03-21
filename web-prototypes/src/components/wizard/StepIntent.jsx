@@ -11,63 +11,69 @@ const StepIntent = ({
     loading 
 }) => {
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Define tu Objetivo</h2>
-        <button onClick={onBack} style={{ color: '#ffffff', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
+    <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <h2 style={{ color: '#111827', margin: 0, fontSize: '24px', fontWeight: '600' }}>Define tu Objetivo</h2>
+        <button onClick={onBack} style={{ color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
           ← Volver a los datos
         </button>
       </div>
       
-      <div style={{ display: 'flex', gap: '40px', marginTop: '20px' }}>
+      <div style={{ display: 'flex', gap: '40px' }}>
         <div style={{ flex: 1 }}>
-          <h3 style={{ borderBottom: '2px solid #007bff', paddingBottom: '10px' }}>1. ¿Qué relación quieres mostrar?</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <h3 style={{ color: '#374151', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>1. ¿Qué relación quieres mostrar?</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {Object.values(RELATIONSHIPS_THEORY).map((rel) => (
               <label 
                 key={rel.id} 
                 style={{ 
-                  padding: '15px', 
-                  border: selectedRelationship === rel.id ? '2px solid #007bff' : '1px solid #ddd', 
+                  padding: '16px', 
+                  border: selectedRelationship === rel.id ? '2px solid #4f46e5' : '1px solid #e5e7eb', 
                   borderRadius: '8px', 
                   cursor: 'pointer',
-                  backgroundColor: selectedRelationship === rel.id ? '#e7f1ff' : 'white',
-                  transition: 'all 0.2s',
-                  color: selectedRelationship === rel.id ? '#007bff' : '#333'
+                  backgroundColor: selectedRelationship === rel.id ? '#eef2ff' : '#ffffff',
+                  transition: 'all 0.2s ease',
+                  display: 'block'
                 }}
               >
-                <input 
-                  type="radio" 
-                  name="relationship" 
-                  value={rel.id} 
-                  checked={selectedRelationship === rel.id}
-                  onChange={() => onRelationshipChange(rel.id)}
-                  style={{ marginRight: '10px' }}
-                />
-                <span style={{ fontWeight: 'bold' }}>{rel.label}</span>
-                <p style={{ margin: '5px 0 0 25px', fontSize: '0.9em', color: '#666' }}>{rel.description}</p>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <input 
+                    type="radio" 
+                    name="relationship" 
+                    value={rel.id} 
+                    checked={selectedRelationship === rel.id}
+                    onChange={() => onRelationshipChange(rel.id)}
+                    style={{ marginRight: '12px', accentColor: '#4f46e5' }}
+                  />
+                  <span style={{ fontWeight: '600', color: selectedRelationship === rel.id ? '#312e81' : '#111827' }}>{rel.label}</span>
+                </div>
+                <p style={{ margin: '8px 0 0 26px', fontSize: '13px', color: selectedRelationship === rel.id ? '#4338ca' : '#6b7280', lineHeight: '1.4' }}>{rel.description}</p>
               </label>
             ))}
           </div>
         </div>
 
         <div style={{ flex: 1 }}>
-          <h3 style={{ borderBottom: '2px solid #28a745', paddingBottom: '10px' }}>2. ¿Cuál es tu intención específica?</h3>
+          <h3 style={{ color: '#374151', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>2. ¿Cuál es tu intención específica?</h3>
           
           {!selectedRelationship ? (
-            <p style={{ color: '#999', fontStyle: 'italic' }}>Selecciona primero un tipo de relación.</p>
+            <div style={{ padding: '24px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px dashed #d1d5db', textAlign: 'center' }}>
+              <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>Selecciona primero un tipo de relación en el panel izquierdo.</p>
+            </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {RELATIONSHIPS_THEORY[selectedRelationship].intents.map((intent) => (
                 <label 
                   key={intent.id}
                   style={{ 
-                    padding: '15px', 
-                    border: selectedIntent === intent.id ? '2px solid #28a745' : '1px solid #ddd', 
+                    padding: '16px', 
+                    border: selectedIntent === intent.id ? '2px solid #4f46e5' : '1px solid #e5e7eb', 
                     borderRadius: '8px', 
                     cursor: 'pointer',
-                    backgroundColor: selectedIntent === intent.id ? '#e8f5e9' : 'white',
-                    color: selectedIntent === intent.id ? '#28a745' : '#333',
+                    backgroundColor: selectedIntent === intent.id ? '#eef2ff' : '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   <input 
@@ -76,29 +82,32 @@ const StepIntent = ({
                     value={intent.id}
                     checked={selectedIntent === intent.id}
                     onChange={() => onIntentChange(intent.id)}
-                    style={{ marginRight: '10px' }}
+                    style={{ marginRight: '12px', accentColor: '#4f46e5' }}
                   />
-                  {intent.label}
+                  <span style={{ fontWeight: '500', color: selectedIntent === intent.id ? '#312e81' : '#374151' }}>{intent.label}</span>
                 </label>
               ))}
             </div>
           )}
 
-          <div style={{ marginTop: '30px', textAlign: 'right' }}>
+          <div style={{ marginTop: '40px', textAlign: 'right' }}>
             <button 
               disabled={!selectedIntent || loading}
               onClick={onGenerate}
               style={{ 
-                backgroundColor: (!selectedIntent || loading) ? '#ccc' : '#007bff', 
+                backgroundColor: (!selectedIntent || loading) ? '#d1d5db' : '#4f46e5', 
                 color: 'white', 
-                padding: '15px 30px', 
+                padding: '12px 24px', 
                 border: 'none', 
-                borderRadius: '5px', 
-                fontSize: '16px', 
+                borderRadius: '6px', 
+                fontSize: '15px', 
+                fontWeight: '500',
                 cursor: (!selectedIntent || loading) ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.2s',
+                width: '100%'
               }}
             >
-              {loading ? 'El Motor está pensando...' : 'Generar Visualización'}
+              {loading ? 'Procesando modelo...' : 'Continuar al Mapeo'}
             </button>
           </div>
         </div>
