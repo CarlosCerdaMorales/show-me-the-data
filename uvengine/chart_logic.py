@@ -44,14 +44,41 @@ class CSVAnalyzer:
     def _detect_column_types(cls, df):
         column_types = {}
         for col in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                column_types[col] = 'Fecha'
+                continue
+                
             if pd.api.types.is_numeric_dtype(df[col]):
                 column_types[col] = 'Numérico'
-            else:
-                try:
-                    pd.to_datetime(df[col], dayfirst=True, errors='raise')
+                continue
+
+            valid_data = df[col].dropna().astype(str)
+            valid_data = valid_data[valid_data.str.len() >= 6]
+            
+            if len(valid_data) == 0:
+                column_types[col] = 'Texto/Categoría'
+                continue
+
+            converted = pd.to_datetime(valid_data, errors='coerce')
+            if converted.notna().sum() / len(valid_data) > 0.8:
+                column_types[col] = 'Fecha'
+                continue
+                
+            converted_eu = pd.to_datetime(valid_data, dayfirst=True, errors='coerce')
+            if converted_eu.notna().sum() / len(valid_data) > 0.8:
+                column_types[col] = 'Fecha'
+                continue
+
+            try:
+                converted_mixed = pd.to_datetime(valid_data, format='mixed', errors='coerce', utc=True)
+                if converted_mixed.notna().sum() / len(valid_data) > 0.8:
                     column_types[col] = 'Fecha'
-                except:
-                    column_types[col] = 'Texto/Categoría'
+                    continue
+            except:
+                pass
+                
+            column_types[col] = 'Texto/Categoría'
+            
         return column_types
 
     @classmethod
@@ -106,14 +133,28 @@ class ChartDataProcessor:
     def clean_and_format_dates(cls, df, x_col, granularity):
         df_clean = df.dropna().copy()
         if granularity:
-            df_clean[x_col] = pd.to_datetime(df_clean[x_col], dayfirst=True, errors='coerce')
+            converted = pd.to_datetime(df_clean[x_col], errors='coerce')
+            if converted.isna().sum() > len(converted) * 0.5:
+                converted = pd.to_datetime(df_clean[x_col], dayfirst=True, errors='coerce')
+                if converted.isna().sum() > len(converted) * 0.5:
+                    try:
+                        converted = pd.to_datetime(df_clean[x_col], format='mixed', errors='coerce', utc=True)
+                    except:
+                        pass
+            df_clean[x_col] = converted
             df_clean = df_clean.dropna(subset=[x_col])
-            if granularity == 'year': df_clean[x_col] = df_clean[x_col].dt.to_period('Y')
-            elif granularity == 'month_year': df_clean[x_col] = df_clean[x_col].dt.to_period('M')
+            
+            if granularity == 'year': 
+                df_clean[x_col] = df_clean[x_col].dt.to_period('Y')
+            elif granularity == 'month_year': 
+                df_clean[x_col] = df_clean[x_col].dt.to_period('M')
+            elif granularity == 'day': 
+                df_clean[x_col] = df_clean[x_col].dt.to_period('D')
+                
         return df_clean
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity):
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config):
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
@@ -133,7 +174,10 @@ class ChartDataProcessor:
                 "borderWidth": 1
             })
             
-        return labels, datasets
+        op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
+        config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col} agrupado por {group_by}"
+            
+        return labels, datasets, config
 
     @classmethod
     def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None):
@@ -168,6 +212,8 @@ class ChartDataProcessor:
 
             op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
             title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col}"
+
+        config['chartTitle'] = title_text
 
         final_data = [{"x": l, "y": v} for l, v in zip(labels, values)] if config.get('Point') else values
 
@@ -248,7 +294,7 @@ class ChartEngineOrchestrator:
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
         if group_by and config.get('PartToWhole'):
-            labels, datasets = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity)
+            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config)
         else:
             labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold)
 
