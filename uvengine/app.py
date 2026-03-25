@@ -38,7 +38,19 @@ def upload_csv():
 @app.route('/generate-chart', methods=['POST'])
 def generate_chart():
     try:
-        resolved_chart_json = ChartEngineOrchestrator.process_and_run(request.json)
+        payload = request.json
+        
+        config = payload.get('config', {})
+        mapping = config.get('mapping', {})
+        
+        if not mapping.get('x') or not mapping.get('y'):
+            return jsonify({"error": "Validación fallida: Faltan las variables X o Y obligatorias en el mapeo."}), 400
+            
+        if config.get('PartToWhole') and mapping.get('groupBy'):
+            if mapping.get('x') == mapping.get('groupBy'):
+                return jsonify({"error": "Validación fallida: La subcategoría de agrupación no puede ser idéntica al Eje X en gráficos de partes de un todo."}), 400
+                
+        resolved_chart_json = ChartEngineOrchestrator.process_and_run(payload)
         return jsonify(resolved_chart_json)
 
     except Exception as e:

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RECOMMENDED_VISUALS } from '../../data/visualizationTheory';
 import { UVL_FEATURES } from '../../data/uvlMapping';
 
@@ -28,11 +28,38 @@ const StepMapping = ({
     return t.includes('fech') || t.includes('date') || t.includes('time');
   };
 
-  const validX = mapping.xColumn ? (isDate(mapping.xColumn) || !isNumeric(mapping.xColumn)) : true;
-  const validY = mapping.yColumn ? isNumeric(mapping.yColumn) : true;
-  const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
+  const isText = (col) => {
+    return !isNumeric(col) && !isDate(col);
+  };
 
-  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || loading;
+  const validXColumns = columns.filter(col => {
+    if (selectedRelationship === 'time_series') return isDate(col);
+    return isText(col); 
+  });
+
+  const validYColumns = columns.filter(col => isNumeric(col));
+  const availableXColumns = validXColumns.filter(col => 
+    !(selectedRelationship === 'part_to_whole' && col === mapping.groupBy)
+  );
+
+  const availableGroupByColumns = columns.filter(isText).filter(col => 
+    col !== mapping.xColumn
+  );
+
+  const validX = mapping.xColumn ? validXColumns.includes(mapping.xColumn) : true;
+  const validY = mapping.yColumn ? validYColumns.includes(mapping.yColumn) : true;
+  const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
+  const isDuplicatePartToWhole = selectedRelationship === 'part_to_whole' && mapping.groupBy && mapping.xColumn === mapping.groupBy;
+
+  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicatePartToWhole || loading;
+  useEffect(() => {
+    if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
+        setMapping(prev => ({ ...prev, xColumn: '' }));
+    }
+    if (mapping.yColumn && !validYColumns.includes(mapping.yColumn)) {
+        setMapping(prev => ({ ...prev, yColumn: '' }));
+    }
+  }, [selectedRelationship, columns, types]);
 
   const handleGenerate = () => {
     const request_from_frontend = {
@@ -85,7 +112,7 @@ const StepMapping = ({
               <label style={labelStyle}>Eje X (Dimensión / Categoría):</label>
               <select value={mapping.xColumn || ''} onChange={(e) => setMapping({...mapping, xColumn: e.target.value})} style={inputStyle(mapping.xColumn ? validX : null)}>
                 <option value="">Selecciona columna...</option>
-                {columns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+                {availableXColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
               </select>
             </div>
 
@@ -105,7 +132,7 @@ const StepMapping = ({
                 <label style={labelStyle}>Subcategoría (Agrupar/Apilar):</label>
                 <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} style={inputStyle(null)}>
                   <option value="">Ninguno (Gráfico simple)</option>
-                  {columns.map(col => types[col] === 'Texto/Categoría' && <option key={col} value={col}>{col}</option>)}
+                  {availableGroupByColumns.map(col => <option key={col} value={col}>{col}</option>)}
                 </select>
               </div>
             )}
@@ -114,7 +141,7 @@ const StepMapping = ({
               <label style={labelStyle}>Eje Y (Métrica / Valor):</label>
               <select value={mapping.yColumn || ''} onChange={(e) => setMapping({...mapping, yColumn: e.target.value})} style={inputStyle(mapping.yColumn ? validY : null)}>
                 <option value="">Selecciona columna...</option>
-                {columns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+                {validYColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
               </select>
             </div>
 
