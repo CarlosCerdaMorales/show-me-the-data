@@ -52,17 +52,69 @@ const Proto = () => {
   };
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
       
-      <div style={{ display: 'flex', borderBottom: '2px solid #ddd', paddingBottom: '20px', marginBottom: '30px' }}>
-        {[1, 2, 3, 4].map(num => (
-            <div key={num} style={{ marginRight: '20px', color: step === num ? '#007bff' : '#ccc', fontWeight: step === num ? 'bold' : 'normal' }}>
-                {num === 1 && "1. Datos"}
-                {num === 2 && "2. Intención"}
-                {num === 3 && "3. Variables"}
-                {num === 4 && "4. Resultado"}
+      <div style={{ 
+        display: 'flex', 
+        borderBottom: '2px solid #e5e7eb', 
+        paddingBottom: '16px', 
+        marginBottom: '32px',
+        gap: '32px'
+      }}>
+        {[
+          { num: 1, label: "Datos" },
+          { num: 2, label: "Intención" },
+          { num: 3, label: "Variables" },
+          { num: 4, label: "Resultado" }
+        ].map(item => {
+          const isActive = step === item.num;
+          const isPast = step >= item.num;
+          
+          return (
+            <div key={item.num} style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              color: isActive ? '#4f46e5' : (isPast ? '#111827' : '#9ca3af'), 
+              fontWeight: isPast ? '600' : '500',
+              fontSize: '15px',
+              position: 'relative',
+              cursor: isPast ? 'pointer' : 'default',
+              transition: 'color 0.2s ease'
+            }}
+            onClick={() => isPast && setStep(item.num)}
+            >
+              <span style={{
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                width: '24px', 
+                height: '24px', 
+                borderRadius: '50%',
+                backgroundColor: isActive ? '#4f46e5' : (isPast ? '#4f46e5' : '#f3f4f6'),
+                color: isPast ? '#ffffff' : '#9ca3af',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                transition: 'all 0.2s ease'
+              }}>
+                {item.num}
+              </span>
+              {item.label}
+              
+              {isActive && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-18px',
+                  left: 0,
+                  width: '100%',
+                  height: '2px',
+                  backgroundColor: '#4f46e5',
+                  borderRadius: '2px'
+                }} />
+              )}
             </div>
-        ))}
+          );
+        })}
       </div>
 
       {step === 1 && (
