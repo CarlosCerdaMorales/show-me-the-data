@@ -33,14 +33,14 @@ const StepMapping = ({
   };
 
   const validXColumns = columns.filter(col => {
-    if (selectedRelationship === 'time_series') return isDate(col);
+    if (selectedRelationship === 'time_series' || selectedIntent === 'deviation_over_time') return isDate(col);
+    if (selectedRelationship === 'part_to_whole' || selectedRelationship === 'deviation') return isText(col) || isDate(col);
     return isText(col); 
   });
 
   const validYColumns = columns.filter(col => isNumeric(col));
-  const availableXColumns = validXColumns.filter(col => 
-    !(selectedRelationship === 'part_to_whole' && col === mapping.groupBy)
-  );
+
+  const availableXColumns = validXColumns.filter(col => col !== mapping.groupBy);
 
   const availableGroupByColumns = columns.filter(isText).filter(col => 
     col !== mapping.xColumn
@@ -49,9 +49,10 @@ const StepMapping = ({
   const validX = mapping.xColumn ? validXColumns.includes(mapping.xColumn) : true;
   const validY = mapping.yColumn ? validYColumns.includes(mapping.yColumn) : true;
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
-  const isDuplicatePartToWhole = selectedRelationship === 'part_to_whole' && mapping.groupBy && mapping.xColumn === mapping.groupBy;
+  const isDuplicateGroupBy = mapping.groupBy && mapping.xColumn === mapping.groupBy;
 
-  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicatePartToWhole || loading;
+  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicateGroupBy || loading;
+
   useEffect(() => {
     if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
         setMapping(prev => ({ ...prev, xColumn: '' }));
@@ -59,7 +60,7 @@ const StepMapping = ({
     if (mapping.yColumn && !validYColumns.includes(mapping.yColumn)) {
         setMapping(prev => ({ ...prev, yColumn: '' }));
     }
-  }, [selectedRelationship, columns, types]);
+  }, [selectedRelationship, columns, types, selectedIntent]);
 
   const handleGenerate = () => {
     const request_from_frontend = {
@@ -127,9 +128,9 @@ const StepMapping = ({
               </div>
             )}
 
-            {selectedRelationship === 'part_to_whole' && (
+            {(selectedRelationship === 'part_to_whole' || selectedRelationship === 'time_series' || selectedRelationship === 'deviation') && (
               <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <label style={labelStyle}>Subcategoría (Agrupar/Apilar):</label>
+                <label style={labelStyle}>Subcategoría (Agrupar/Comparar):</label>
                 <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} style={inputStyle(null)}>
                   <option value="">Ninguno (Gráfico simple)</option>
                   {availableGroupByColumns.map(col => <option key={col} value={col}>{col}</option>)}

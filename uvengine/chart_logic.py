@@ -154,7 +154,7 @@ class ChartDataProcessor:
         return df_clean
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config):
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None):
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
@@ -162,8 +162,13 @@ class ChartDataProcessor:
         if granularity: 
             df_pivot = df_pivot.sort_index()
 
+        is_base_diff = config.get('BaseDifference') and threshold is not None
+        if is_base_diff:
+            df_pivot = df_pivot - threshold
+
         labels = df_pivot.index.astype(str).tolist()
         datasets = []
+        is_line = config.get('Line', False)
         
         for i, col in enumerate(df_pivot.columns):
             datasets.append({
@@ -171,11 +176,32 @@ class ChartDataProcessor:
                 "data": df_pivot[col].tolist(),
                 "backgroundColor": f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 0.8)',
                 "borderColor": f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 1)',
-                "borderWidth": 1
+                "borderWidth": 2 if is_line else 1,
+                "fill": False if is_line else True,
+                "tension": 0.4 if is_line else 0,
+                "pointRadius": 4 if is_line else 0,
+                "pointHoverRadius": 6 if is_line else 0
+            })
+            
+        if config.get('DeviationOverTime') and threshold is not None:
+            datasets.append({
+                "type": "line",
+                "label": f"Referencia ({threshold})",
+                "data": [threshold] * len(labels),
+                "borderColor": f"rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 1)",
+                "borderWidth": 2,
+                "borderDash": [5, 5],
+                "fill": False,
+                "pointRadius": 0,
+                "pointHoverRadius": 0
             })
             
         op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
-        config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col} agrupado por {group_by}"
+        
+        if is_base_diff:
+            config['chartTitle'] = f"Diferencia de {y_col} respecto a la base ({threshold}) agrupado por {group_by}"
+        else:
+            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col} agrupado por {group_by}"
             
         return labels, datasets, config
 
@@ -293,8 +319,8 @@ class ChartEngineOrchestrator:
         df_clean = ChartDataProcessor.clean_and_format_dates(df[cols_needed], x_col, granularity)
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
-        if group_by and config.get('PartToWhole'):
-            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config)
+        if group_by:
+            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold)
         else:
             labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold)
 
