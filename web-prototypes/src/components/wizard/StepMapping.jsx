@@ -34,7 +34,7 @@ const StepMapping = ({
 
   const validXColumns = columns.filter(col => {
     if (selectedRelationship === 'time_series' || selectedIntent === 'deviation_over_time') return isDate(col);
-    if (selectedRelationship === 'part_to_whole' || selectedRelationship === 'deviation') return isText(col) || isDate(col);
+    if (selectedRelationship === 'part_to_whole' || selectedRelationship === 'deviation') return isText(col);
     return isText(col); 
   });
 
@@ -128,7 +128,7 @@ const StepMapping = ({
               </div>
             )}
 
-            {(selectedRelationship === 'part_to_whole' || selectedRelationship === 'time_series' || selectedRelationship === 'deviation') && (
+            {(selectedRelationship === 'part_to_whole' ||  selectedIntent === 'deviation_over_time') && (
               <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
                 <label style={labelStyle}>Subcategoría (Agrupar/Comparar):</label>
                 <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} style={inputStyle(null)}>
