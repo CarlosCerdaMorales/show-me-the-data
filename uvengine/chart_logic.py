@@ -5,7 +5,6 @@ import sys
 import pandas as pd
 import numpy as np
 
-# --- CONFIGURACIÓN DE RUTAS ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "tfg_test")
 os.makedirs(MODEL_DIR, exist_ok=True)
@@ -229,6 +228,9 @@ class ChartDataProcessor:
             border_colors = [f'rgba({FEW_PALETTE[3][0]}, {FEW_PALETTE[3][1]}, {FEW_PALETTE[3][2]}, 1)' if v >= 0 else f'rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 1)' for v in values]
             title_text = f"Diferencia de {y_col} respecto a la base ({threshold})"
         else:
+            op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
+            title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col}"
+
             if not is_time_series:
                 bg_colors = [f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 0.6)' for i in range(len(labels))]
                 border_colors = [f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 1)' for i in range(len(labels))]
@@ -236,10 +238,7 @@ class ChartDataProcessor:
                 bg_colors = f"rgba({FEW_PALETTE[1][0]}, {FEW_PALETTE[1][1]}, {FEW_PALETTE[1][2]}, 0.2)"
                 border_colors = f"rgba({FEW_PALETTE[1][0]}, {FEW_PALETTE[1][1]}, {FEW_PALETTE[1][2]}, 1)"
 
-            op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
-            title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col}"
-
-        config['chartTitle'] = title_text
+        config['chartTitle'] = f"{title_text} por {x_col}"
 
         final_data = [{"x": l, "y": v} for l, v in zip(labels, values)] if config.get('Point') else values
 
