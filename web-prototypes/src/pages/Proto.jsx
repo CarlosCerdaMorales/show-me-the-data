@@ -6,6 +6,8 @@ import StepIntent from '../components/wizard/StepIntent';
 import StepMapping from '../components/wizard/StepMapping';
 import StepResult from '../components/wizard/StepResult';
 
+import './css/Proto.css';
+
 const Proto = () => {
   const [step, setStep] = useState(1);
   const [csvData, setCsvData] = useState(null);
@@ -51,16 +53,21 @@ const Proto = () => {
     }
   };
 
+  const getStepItemClass = (isActive, isPast) => {
+    if (isActive) return 'proto-step-item-active';
+    if (isPast) return 'proto-step-item-past';
+    return 'proto-step-item-future';
+  };
+
+  const getStepNumberClass = (isActive, isPast) => {
+    if (isActive || isPast) return 'proto-step-number-active';
+    return 'proto-step-number-future';
+  };
+
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="proto-container">
       
-      <div style={{ 
-        display: 'flex', 
-        borderBottom: '2px solid #e5e7eb', 
-        paddingBottom: '16px', 
-        marginBottom: '32px',
-        gap: '32px'
-      }}>
+      <div className="proto-stepper">
         {[
           { num: 1, label: "Datos" },
           { num: 2, label: "Intención" },
@@ -71,46 +78,18 @@ const Proto = () => {
           const isPast = step >= item.num;
           
           return (
-            <div key={item.num} style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              color: isActive ? '#4f46e5' : (isPast ? '#111827' : '#9ca3af'), 
-              fontWeight: isPast ? '600' : '500',
-              fontSize: '15px',
-              position: 'relative',
-              cursor: isPast ? 'pointer' : 'default',
-              transition: 'color 0.2s ease'
-            }}
-            onClick={() => isPast && setStep(item.num)}
+            <div 
+              key={item.num} 
+              className={`proto-step-item ${getStepItemClass(isActive, isPast)}`}
+              onClick={() => isPast && setStep(item.num)}
             >
-              <span style={{
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                width: '24px', 
-                height: '24px', 
-                borderRadius: '50%',
-                backgroundColor: isActive ? '#4f46e5' : (isPast ? '#4f46e5' : '#f3f4f6'),
-                color: isPast ? '#ffffff' : '#9ca3af',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                transition: 'all 0.2s ease'
-              }}>
+              <span className={`proto-step-number ${getStepNumberClass(isActive, isPast)}`}>
                 {item.num}
               </span>
               {item.label}
               
               {isActive && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-18px',
-                  left: 0,
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: '#4f46e5',
-                  borderRadius: '2px'
-                }} />
+                <div className="proto-step-indicator" />
               )}
             </div>
           );

@@ -1,0 +1,75 @@
+.comparison-container {
+  background-color: #ffffff;
+  padding: 48px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-width: 900px;
+  margin: 0 auto;
+  color: #374151;
+}
+
+.comparison-title {
+  color: #111827;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.comparison-intro {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  color: #4b5563;
+  text-align: left;
+}
+
+.comparison-section {
+  border: 1px solid #e5e7eb;
+  padding: 32px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  background-color: #f9fafb;
+}
+
+.comparison-section-last {
+  border: 1px solid #e5e7eb;
+  padding: 32px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.comparison-section-title {
+  color: #111827;
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.comparison-chart-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.comparison-chart-inner {
+  min-height: 350px;
+}
+
+.comparison-chart-inner-hidden {
+  min-height: 350px;
+  overflow: hidden;
+}
+
+.comparison-caption {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 15px 0 0 0;
+  text-align: center;
+  font-style: italic;
+}

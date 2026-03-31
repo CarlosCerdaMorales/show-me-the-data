@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import DynamicChart from '../DynamicChart';
+import './css/StepResult.css';
 
 const StepResult = ({ chartConfig, onBack }) => {
   const chartRef = useRef(null);
@@ -22,62 +23,32 @@ const StepResult = ({ chartConfig, onBack }) => {
   };
 
   return (
-    <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+    <div className="result-container">
+      <div className="result-header">
         <div>
-          <h2 style={{ color: '#111827', margin: '0 0 8px 0', fontSize: '24px', fontWeight: '600' }}>Visualización Generada</h2>
-          <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>Basada en la configuración derivada de la línea de productos de software.</p>
+          <h2 className="result-title">Visualización Generada</h2>
+          <p className="result-subtitle">Basada en la configuración derivada de la línea de productos de software.</p>
         </div>
-        <button onClick={onBack} style={{ color: '#4f46e5', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+        <button onClick={onBack} className="result-back-btn">
           ← Modificar variables
         </button>
       </div>
 
       {chartConfig ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
-          <div 
-            ref={chartRef}
-            style={{ 
-              backgroundColor: '#ffffff',
-              padding: '32px',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              minHeight: '450px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+        <div className="result-content">
+          <div ref={chartRef} className="result-chart-box">
             <DynamicChart config={chartConfig} />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button 
-              onClick={downloadChart}
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                backgroundColor: '#ffffff',
-                border: '1px solid #d1d5db',
-                padding: '10px 20px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                color: '#374151',
-                fontWeight: '500',
-                fontSize: '14px',
-                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                transition: 'background-color 0.2s'
-              }}
-            >
+          <div className="result-actions">
+            <button onClick={downloadChart} className="result-download-btn">
                Descargar PNG
             </button>
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '64px 32px', border: '1px dashed #d1d5db', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
-          <p style={{ color: '#6b7280', margin: 0, fontWeight: '500' }}>No se pudo generar el JSON de configuración de la gráfica.</p>
+        <div className="result-empty">
+          <p className="result-empty-text">No se pudo generar el JSON de configuración de la gráfica.</p>
         </div>
       )}
     </div>

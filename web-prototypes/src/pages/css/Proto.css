@@ -1,0 +1,77 @@
+.proto-container {
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.proto-stepper {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+  gap: 32px;
+}
+
+.proto-step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.proto-step-item-active {
+  color: #4f46e5;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.proto-step-item-past {
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.proto-step-item-future {
+  color: #9ca3af;
+  font-weight: 500;
+  cursor: default;
+}
+
+.proto-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.proto-step-number-active {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.proto-step-number-past {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.proto-step-number-future {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+.proto-step-indicator {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4f46e5;
+  border-radius: 2px;
+}

@@ -1,0 +1,177 @@
+.intent-container {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.intent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.intent-title {
+  color: #111827;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.intent-back-btn {
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.intent-layout {
+  display: flex;
+  gap: 40px;
+}
+
+.intent-col {
+  flex: 1;
+}
+
+.intent-col-title {
+  color: #374151;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.intent-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.intent-card {
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.intent-card-selected {
+  border: 2px solid #4f46e5;
+  background-color: #eef2ff;
+}
+
+.intent-card-default {
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.intent-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.intent-radio {
+  margin-right: 12px;
+  accent-color: #4f46e5;
+}
+
+.intent-label-text {
+  font-weight: 600;
+}
+
+.intent-label-text-selected {
+  color: #312e81;
+}
+
+.intent-label-text-default {
+  color: #111827;
+}
+
+.intent-desc {
+  margin: 8px 0 0 26px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.intent-desc-selected {
+  color: #4338ca;
+}
+
+.intent-desc-default {
+  color: #6b7280;
+}
+
+.intent-empty {
+  padding: 24px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+  text-align: center;
+}
+
+.intent-empty-text {
+  color: #6b7280;
+  margin: 0;
+  font-size: 14px;
+}
+
+.intent-subcard {
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.intent-subcard-selected {
+  border: 2px solid #4f46e5;
+  background-color: #eef2ff;
+}
+
+.intent-subcard-default {
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.intent-sub-label {
+  font-weight: 500;
+}
+
+.intent-sub-label-selected {
+  color: #312e81;
+}
+
+.intent-sub-label-default {
+  color: #374151;
+}
+
+.intent-footer {
+  margin-top: 40px;
+  text-align: right;
+}
+
+.intent-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.intent-btn-active {
+  background-color: #4f46e5;
+  color: white;
+  cursor: pointer;
+}
+
+.intent-btn-disabled {
+  background-color: #d1d5db;
+  color: white;
+  cursor: not-allowed;
+}

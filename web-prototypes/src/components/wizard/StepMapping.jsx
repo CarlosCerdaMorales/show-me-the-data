@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RECOMMENDED_VISUALS } from '../../data/visualizationTheory';
 import { UVL_FEATURES } from '../../data/uvlMapping';
+import './css/StepMapping.css';
 
 const StepMapping = ({ 
   columns, 
@@ -93,113 +94,102 @@ const StepMapping = ({
 
   const recommendation = RECOMMENDED_VISUALS[selectedIntent] || null;
 
-  const inputStyle = (isValid) => ({
-    width: '100%', padding: '10px 14px', borderRadius: '6px', fontSize: '14px',
-    border: isValid === false ? '2px solid #ef4444' : '1px solid #d1d5db',
-    outline: 'none', backgroundColor: '#ffffff', color: '#111827', boxSizing: 'border-box'
-  });
-
-  const labelStyle = { display: 'block', fontWeight: '500', marginBottom: '6px', color: '#374151', fontSize: '14px' };
+  const getInputClass = (isValid) => {
+    return `mapping-input ${isValid === false ? 'mapping-input-error' : 'mapping-input-default'}`;
+  };
 
   return (
-    <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <h2 style={{ color: '#111827', margin: 0, fontSize: '24px', fontWeight: '600' }}>Mapeo de Variables</h2>
-        <button onClick={onBack} style={{ color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+    <div className="mapping-container">
+      <div className="mapping-header">
+        <h2 className="mapping-title">Mapeo de Variables</h2>
+        <button onClick={onBack} className="mapping-back-btn">
           ← Volver a intenciones
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '40px' }}>
-        <div style={{ flex: '1.2' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
-            <div>
-              <label style={labelStyle}>Eje X (Dimensión / Categoría):</label>
-              <select value={mapping.xColumn || ''} onChange={(e) => setMapping({...mapping, xColumn: e.target.value})} style={inputStyle(mapping.xColumn ? validX : null)}>
-                <option value="">Selecciona columna...</option>
-                {availableXColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
-              </select>
-            </div>
-
-            {isDate(mapping.xColumn) && (
-              <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <label style={labelStyle}>Resolución Temporal:</label>
-                <select value={granularity} onChange={(e) => setGranularity(e.target.value)} style={inputStyle(null)}>
-                  <option value="day">Día a día</option>
-                  <option value="month_year">Mes y Año</option>
-                  <option value="year">Año completo</option>
-                </select>
-              </div>
-            )}
-
-            {(selectedRelationship === 'part_to_whole' || selectedIntent === 'deviation_over_time') && (
-              <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <label style={labelStyle}>Subcategoría (Agrupar/Comparar):</label>
-                <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} style={inputStyle(null)}>
-                  <option value="">Ninguno (Gráfico simple)</option>
-                  {availableGroupByColumns.map(col => <option key={col} value={col}>{col}</option>)}
-                </select>
-              </div>
-            )}
-
-            <div>
-              <label style={labelStyle}>Eje Y (Métrica / Valor):</label>
-              <select value={mapping.yColumn || ''} onChange={(e) => setMapping({...mapping, yColumn: e.target.value})} style={inputStyle(mapping.yColumn ? validY : null)}>
-                <option value="">Selecciona columna...</option>
-                {validYColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
-              </select>
-            </div>
-
-            {selectedRelationship === 'deviation' && (
-              <div style={{ padding: '16px', backgroundColor: '#fef2f2', borderRadius: '8px', border: '1px solid #fecaca' }}>
-                <label style={{...labelStyle, color: '#991b1b'}}>Valor de Referencia (Umbral):</label>
-                <input 
-                  type="number" 
-                  value={mapping.threshold || ''}
-                  onChange={(e) => setMapping({...mapping, threshold: e.target.value})}
-                  placeholder="Ej: 1000"
-                  style={inputStyle(mapping.threshold ? validThreshold : null)}
-                />
-              </div>
-            )}
-
-            <div>
-              <label style={labelStyle}>Operación Matemática:</label>
-              <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} style={inputStyle(null)}>
-                <option value="sum">Sumar valores</option>
-                <option value="mean">Calcular Promedio</option>
-                <option value="count">Contar registros</option>
-              </select>
-            </div>
-
-            <button 
-              onClick={handleGenerate}
-              disabled={disableGenerate}
-              style={{
-                width: '100%', padding: '14px', borderRadius: '8px', fontWeight: '600', fontSize: '15px', marginTop: '10px',
-                backgroundColor: disableGenerate ? '#d1d5db' : '#4f46e5',
-                color: 'white', border: 'none', cursor: disableGenerate ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-            >
-              {loading ? 'Derivando Gráfico...' : 'Generar Visualización Final'}
-            </button>
+      <div className="mapping-layout">
+        <div className="mapping-left">
+          
+          <div>
+            <label className="mapping-label">Eje X (Dimensión / Categoría):</label>
+            <select value={mapping.xColumn || ''} onChange={(e) => setMapping({...mapping, xColumn: e.target.value})} className={getInputClass(mapping.xColumn ? validX : null)}>
+              <option value="">Selecciona columna...</option>
+              {availableXColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+            </select>
           </div>
+
+          {isDate(mapping.xColumn) && (
+            <div className="mapping-box">
+              <label className="mapping-label">Resolución Temporal:</label>
+              <select value={granularity} onChange={(e) => setGranularity(e.target.value)} className={getInputClass(null)}>
+                <option value="day">Día a día</option>
+                <option value="month_year">Mes y Año</option>
+                <option value="year">Año completo</option>
+              </select>
+            </div>
+          )}
+
+          {(selectedRelationship === 'part_to_whole' || selectedIntent === 'deviation_over_time') && (
+            <div className="mapping-box">
+              <label className="mapping-label">Subcategoría (Agrupar/Comparar):</label>
+              <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} className={getInputClass(null)}>
+                <option value="">Ninguno (Gráfico simple)</option>
+                {availableGroupByColumns.map(col => <option key={col} value={col}>{col}</option>)}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label className="mapping-label">Eje Y (Métrica / Valor):</label>
+            <select value={mapping.yColumn || ''} onChange={(e) => setMapping({...mapping, yColumn: e.target.value})} className={getInputClass(mapping.yColumn ? validY : null)}>
+              <option value="">Selecciona columna...</option>
+              {validYColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+            </select>
+          </div>
+
+          {selectedRelationship === 'deviation' && (
+            <div className="mapping-box-alert">
+              <label className="mapping-label-alert">Valor de Referencia (Umbral):</label>
+              <input 
+                type="number" 
+                value={mapping.threshold || ''}
+                onChange={(e) => setMapping({...mapping, threshold: e.target.value})}
+                placeholder="Ej: 1000"
+                className={getInputClass(mapping.threshold ? validThreshold : null)}
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="mapping-label">Operación Matemática:</label>
+            <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} className={getInputClass(null)}>
+              <option value="sum">Suma</option>
+              <option value="mean">Promedio</option>
+              <option value="count">Conteo</option>
+            </select>
+          </div>
+
+          <button 
+            onClick={handleGenerate}
+            disabled={disableGenerate}
+            className={`mapping-btn ${disableGenerate ? 'mapping-btn-disabled' : 'mapping-btn-active'}`}
+          >
+            {loading ? 'Derivando Gráfico...' : 'Generar Visualización Final'}
+          </button>
         </div>
 
-        <div style={{ flex: '0.8', padding: '24px', backgroundColor: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <h4 style={{ color: '#374151', margin: '0 0 20px 0', fontSize: '15px', fontWeight: '600', width: '100%', textAlign: 'left' }}>Sugerencia Teórica:</h4>
+        <div className="mapping-right">
+          <h4 className="mapping-sug-title">Sugerencia Teórica:</h4>
           {recommendation ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb', display: 'inline-block', marginBottom: '16px' }}>
-                 <img src={recommendation.image} alt="preview" style={{ maxWidth: '140px', display: 'block' }} />
+            <div className="mapping-sug-wrapper">
+              <div className="mapping-sug-img-box">
+                 <img src={recommendation.image} alt="preview" className="mapping-sug-img" />
               </div>
-              <p style={{ fontWeight: '600', color: '#111827', margin: '0 0 8px 0', fontSize: '15px' }}>{recommendation.label}</p>
-              <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: '1.5', margin: 0 }}>{recommendation.desc}</p>
+              <p className="mapping-sug-label">{recommendation.label}</p>
+              <p className="mapping-sug-desc">{recommendation.desc}</p>
             </div>
           ) : (
-            <p style={{ color: '#9ca3af', fontSize: '14px', textAlign: 'center' }}>Selecciona una intención para ver la recomendación empírica.</p>
+            <p className="mapping-sug-empty">Selecciona una intención para ver la recomendación empírica.</p>
           )}
         </div>
       </div>

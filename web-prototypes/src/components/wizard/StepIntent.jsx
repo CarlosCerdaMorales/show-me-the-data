@@ -1,5 +1,6 @@
 import React from 'react';
 import { RELATIONSHIPS_THEORY } from '../../data/visualizationTheory';
+import './css/StepIntent.css';
 
 const StepIntent = ({ 
     selectedRelationship, 
@@ -11,70 +12,57 @@ const StepIntent = ({
     loading 
 }) => {
   return (
-    <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <h2 style={{ color: '#111827', margin: 0, fontSize: '24px', fontWeight: '600' }}>Define tu Objetivo</h2>
-        <button onClick={onBack} style={{ color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+    <div className="intent-container">
+      <div className="intent-header">
+        <h2 className="intent-title">Define tu Objetivo</h2>
+        <button onClick={onBack} className="intent-back-btn">
           ← Volver a los datos
         </button>
       </div>
       
-      <div style={{ display: 'flex', gap: '40px' }}>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ color: '#374151', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>1. ¿Qué relación quieres mostrar?</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div className="intent-layout">
+        <div className="intent-col">
+          <h3 className="intent-col-title">1. ¿Qué relación quieres mostrar?</h3>
+          <div className="intent-radio-group">
             {Object.values(RELATIONSHIPS_THEORY).map((rel) => (
               <label 
                 key={rel.id} 
-                style={{ 
-                  padding: '16px', 
-                  border: selectedRelationship === rel.id ? '2px solid #4f46e5' : '1px solid #e5e7eb', 
-                  borderRadius: '8px', 
-                  cursor: 'pointer',
-                  backgroundColor: selectedRelationship === rel.id ? '#eef2ff' : '#ffffff',
-                  transition: 'all 0.2s ease',
-                  display: 'block'
-                }}
+                className={`intent-card ${selectedRelationship === rel.id ? 'intent-card-selected' : 'intent-card-default'}`}
               >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="intent-card-header">
                   <input 
                     type="radio" 
                     name="relationship" 
                     value={rel.id} 
                     checked={selectedRelationship === rel.id}
                     onChange={() => onRelationshipChange(rel.id)}
-                    style={{ marginRight: '12px', accentColor: '#4f46e5' }}
+                    className="intent-radio"
                   />
-                  <span style={{ fontWeight: '600', color: selectedRelationship === rel.id ? '#312e81' : '#111827' }}>{rel.label}</span>
+                  <span className={`intent-label-text ${selectedRelationship === rel.id ? 'intent-label-text-selected' : 'intent-label-text-default'}`}>
+                    {rel.label}
+                  </span>
                 </div>
-                <p style={{ margin: '8px 0 0 26px', fontSize: '13px', color: selectedRelationship === rel.id ? '#4338ca' : '#6b7280', lineHeight: '1.4' }}>{rel.description}</p>
+                <p className={`intent-desc ${selectedRelationship === rel.id ? 'intent-desc-selected' : 'intent-desc-default'}`}>
+                  {rel.description}
+                </p>
               </label>
             ))}
           </div>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <h3 style={{ color: '#374151', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>2. ¿Cuál es tu intención específica?</h3>
+        <div className="intent-col">
+          <h3 className="intent-col-title">2. ¿Cuál es tu intención específica?</h3>
           
           {!selectedRelationship ? (
-            <div style={{ padding: '24px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px dashed #d1d5db', textAlign: 'center' }}>
-              <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>Selecciona primero un tipo de relación en el panel izquierdo.</p>
+            <div className="intent-empty">
+              <p className="intent-empty-text">Selecciona primero un tipo de relación en el panel izquierdo.</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="intent-radio-group">
               {RELATIONSHIPS_THEORY[selectedRelationship].intents.map((intent) => (
                 <label 
                   key={intent.id}
-                  style={{ 
-                    padding: '16px', 
-                    border: selectedIntent === intent.id ? '2px solid #4f46e5' : '1px solid #e5e7eb', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer',
-                    backgroundColor: selectedIntent === intent.id ? '#eef2ff' : '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    transition: 'all 0.2s ease'
-                  }}
+                  className={`intent-subcard ${selectedIntent === intent.id ? 'intent-subcard-selected' : 'intent-subcard-default'}`}
                 >
                   <input 
                     type="radio" 
@@ -82,30 +70,21 @@ const StepIntent = ({
                     value={intent.id}
                     checked={selectedIntent === intent.id}
                     onChange={() => onIntentChange(intent.id)}
-                    style={{ marginRight: '12px', accentColor: '#4f46e5' }}
+                    className="intent-radio"
                   />
-                  <span style={{ fontWeight: '500', color: selectedIntent === intent.id ? '#312e81' : '#374151' }}>{intent.label}</span>
+                  <span className={`intent-sub-label ${selectedIntent === intent.id ? 'intent-sub-label-selected' : 'intent-sub-label-default'}`}>
+                    {intent.label}
+                  </span>
                 </label>
               ))}
             </div>
           )}
 
-          <div style={{ marginTop: '40px', textAlign: 'right' }}>
+          <div className="intent-footer">
             <button 
               disabled={!selectedIntent || loading}
               onClick={onGenerate}
-              style={{ 
-                backgroundColor: (!selectedIntent || loading) ? '#d1d5db' : '#4f46e5', 
-                color: 'white', 
-                padding: '12px 24px', 
-                border: 'none', 
-                borderRadius: '6px', 
-                fontSize: '15px', 
-                fontWeight: '500',
-                cursor: (!selectedIntent || loading) ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.2s',
-                width: '100%'
-              }}
+              className={`intent-btn ${(!selectedIntent || loading) ? 'intent-btn-disabled' : 'intent-btn-active'}`}
             >
               {loading ? 'Procesando modelo...' : 'Continuar al Mapeo'}
             </button>
