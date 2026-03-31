@@ -60,6 +60,11 @@ const StepMapping = ({
     if (mapping.yColumn && !validYColumns.includes(mapping.yColumn)) {
         setMapping(prev => ({ ...prev, yColumn: '' }));
     }
+    
+    const usesGroupBy = selectedRelationship === 'part_to_whole' || selectedIntent === 'deviation_over_time';
+    if (mapping.groupBy && !usesGroupBy) {
+        setMapping(prev => ({ ...prev, groupBy: '' }));
+    }
   }, [selectedRelationship, columns, types, selectedIntent]);
 
   const handleGenerate = () => {
@@ -128,7 +133,7 @@ const StepMapping = ({
               </div>
             )}
 
-            {(selectedRelationship === 'part_to_whole' ||  selectedIntent === 'deviation_over_time') && (
+            {(selectedRelationship === 'part_to_whole' || selectedIntent === 'deviation_over_time') && (
               <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
                 <label style={labelStyle}>Subcategoría (Agrupar/Comparar):</label>
                 <select value={mapping.groupBy || ''} onChange={(e) => setMapping({...mapping, groupBy: e.target.value})} style={inputStyle(null)}>
