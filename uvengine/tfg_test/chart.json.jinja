@@ -1,7 +1,7 @@
 {
-  "type": "{% if Line %}line{% elif Bar %}bar{% elif Point %}scatter{% elif Box %}boxplot{% else %}bar{% endif %}",
+  "type": "{% if ChartRenderer == 'Type:LineChart' %}line{% elif ChartRenderer == 'Type:BarChart' %}bar{% elif ChartRenderer == 'Type:ScatterPlot' %}scatter{% elif ChartRenderer == 'Type:BoxPlot' %}boxplot{% else %}bar{% endif %}",
   "data": {
-    "labels": {{ labels | tojson }}, 
+    "labels": {{ labels | tojson }},
     "datasets": {{ datasets | tojson }}
   },
   "options": {
@@ -23,17 +23,17 @@
     },
     "scales": {
       "y": {
-        "beginAtZero": {% if NonZeroScale %}false{% else %}true{% endif %},
-        "stacked": {% if Stacked %}true{% else %}false{% endif %},
+        "beginAtZero": {% if AxisConfigurator == 'StartAtZero:False' %}false{% else %}true{% endif %},
+        "stacked": {% if SeriesConfigurator == 'Stacking:Enabled' %}true{% else %}false{% endif %},
         "grid": {
-          "display": {% if GridLines %}true{% else %}false{% endif %}
+          "display": {% if StyleConfigurator == 'ShowGrid:True' %}true{% else %}false{% endif %}
         }
       },
       "x": {
-        {% if Point %} "type": "category", {% endif %}
-        "stacked": {% if Stacked %}true{% else %}false{% endif %},
+        {% if ChartRenderer == 'Type:ScatterPlot' %} "type": "category", {% endif %}
+        "stacked": {% if SeriesConfigurator == 'Stacking:Enabled' %}true{% else %}false{% endif %},
         "grid": {
-          "display": {% if GridLines %}true{% else %}false{% endif %}
+          "display": {% if StyleConfigurator == 'ShowGrid:True' %}true{% else %}false{% endif %}
         }
       }
     }
