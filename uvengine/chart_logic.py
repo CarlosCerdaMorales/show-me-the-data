@@ -81,35 +81,10 @@ class CSVAnalyzer:
         return column_types
 
     @classmethod
-    def _generate_part_to_whole_suggestions(cls, column_types):
-        categorical_cols = [col for col, t in column_types.items() if t == 'Texto/Categoría']
-        numeric_cols = [col for col, t in column_types.items() if t == 'Numérico']
-        
-        suggestions = []
-        for cat in categorical_cols:
-            for num in numeric_cols:
-                suggestions.append({
-                    "agrupador": cat,
-                    "metrica": num,
-                    "descripcion": f"Proporción de {num} dividida por {cat}"
-                })
-        return suggestions
-
-    @classmethod
-    def _get_unique_categories(cls, df, column_types):
-        unique_vals = {}
-        for col, t in column_types.items():
-            if t == 'Texto/Categoría':
-                unique_vals[col] = df[col].dropna().unique().tolist()
-        return unique_vals
-
-    @classmethod
     def analyze(cls, filepath):
         df = cls._load_csv(filepath)
         column_types = cls._detect_column_types(df)
-        pt_suggestions = cls._generate_part_to_whole_suggestions(column_types)
-        unique_categories = cls._get_unique_categories(df, column_types)
-        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df), pt_suggestions, unique_categories
+        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df)
 
 
 class ChartDataProcessor:
