@@ -12,7 +12,6 @@ export const UVL_FEATURES = {
   'compare_sizes': 'CompareSizes',
   'show_evolution': 'ShowEvolution',
   'emphasize_individual': 'EmphasizeIndividual',
-  'irregular_intervals': 'IrregularIntervals',
   'emphasize_larger': 'EmphasizeLarger',
   'emphasize_smaller': 'EmphasizeSmaller',
   'non_zero_scale': 'NonZeroScale',

@@ -22,7 +22,6 @@ export const RELATIONSHIPS_THEORY = {
       intents: [
         { id: 'emphasize_individual', label: 'Enfatizar valores individuales (Barras verticales)' },
         { id: 'show_evolution', label: 'Mostrar la evolución del patrón (Líneas)' },
-        { id: 'irregular_intervals', label: 'Intervalos de tiempo irregulares (Puntos)' }
       ]
     },
     ranking: {
@@ -76,12 +75,6 @@ export const RECOMMENDED_VISUALS = {
     label: 'Gráfico de Barras', 
     image: imgBarStandard, 
     desc: 'Enfatiza los valores individuales por fecha.' 
-  },
-  'irregular_intervals': { 
-    type: 'scatter', 
-    label: 'Diagrama de Dispersión', 
-    image: imgScatter,
-    desc: 'Muestra puntos en momentos desiguales.' 
   },
 
   // Ranking

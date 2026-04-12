@@ -93,7 +93,7 @@ class ChartDataProcessor:
         completed_config = config.copy()
         if config.get('ShowEvolution') or config.get('DeviationOverTime'):
             completed_config['Line'] = True
-        elif config.get('IrregularIntervals') or config.get('NonZeroScale'):
+        elif config.get('NonZeroScale'):
             completed_config['Point'] = True
         elif any(config.get(k) for k in ['CompareSizes', 'EmphasizeIndividual', 'EmphasizeLarger', 'EmphasizeSmaller', 'TouchingBars', 'StackedBars', 'BaseDifference']):
             completed_config['Bar'] = True

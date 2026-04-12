@@ -19,7 +19,6 @@ features
                     // Series Temporales
                     EmphasizeIndividual
                     ShowEvolution
-                    IrregularIntervals
 
                     // Ranking
                     EmphasizeLarger
@@ -51,7 +50,7 @@ features
 constraints
     // Relación -> Intenciones disponibles
     Nominal => CompareSizes
-    TimeSeries => EmphasizeIndividual | ShowEvolution | IrregularIntervals
+    TimeSeries => EmphasizeIndividual | ShowEvolution
     Ranking => EmphasizeLarger | EmphasizeSmaller | NonZeroScale
     PartToWhole => TouchingBars | StackedBars
     Deviation => BaseDifference | DeviationOverTime
@@ -64,7 +63,6 @@ constraints
     // --- Series Temporales ---
     ShowEvolution => Line
     EmphasizeIndividual => Bar
-    IrregularIntervals => Point
 
     // --- Ranking ---
     EmphasizeLarger => Bar

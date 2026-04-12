@@ -22,7 +22,7 @@ La aplicación funciona como un asistente guiado (Wizard) que acompaña al usuar
 1. **Ingesta y Perfilado de Datos:** El usuario sube un archivo CSV. El sistema lo analiza, extrae las columnas y clasifica los tipos de datos (Numéricos, Fechas, Categóricos/Textuales).
 2. **Definición de Intención:** El usuario selecciona el tipo de relación de sus datos (Nominal, Serie Temporal, Ranking, Partes de un Todo o Desviación) y qué intenta resaltar exactamente (por ejemplo, mostrar la evolución de una tendencia frente a comparar tamaños individuales).
 3. **Mapeo de Variables:** Se asignan las columnas a los ejes del gráfico, permitiendo aplicar agrupaciones, granularidad temporal y operaciones matemáticas (sumas, promedios).
-4. **Derivación y Generación:** El motor cruza toda esta información con la teoría de diseño, recomienda la mejor opción empírica (ej. líneas frente a puntos si los intervalos son irregulares) y renderiza el resultado final interactivo.
+4. **Derivación y Generación:** El motor cruza toda esta información con la teoría de diseño, recomienda la mejor opción empírica y renderiza el resultado final interactivo.
 
 ## Arquitectura y Tecnologías Clave
 

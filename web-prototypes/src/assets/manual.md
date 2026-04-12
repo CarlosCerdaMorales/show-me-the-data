@@ -30,7 +30,6 @@ Aquí es donde entra la "magia". En lugar de elegir simplemente "quiero un gráf
     * **En Series Temporales:**
         * *Enfatizar valores individuales:* Ideal para comparar métricas en fechas concretas (sugerirá barras).
         * *Mostrar la evolución del patrón:* Perfecto para ver tendencias continuas (sugerirá líneas).
-        * *Intervalos de tiempo irregulares:* Cuando las mediciones no son periódicas (sugerirá puntos).
     * **En Rankings:**
         * *Enfatizar valores mayores:* Aplica un orden descendente para destacar el Top.
         * *Enfatizar valores menores:* Aplica un orden ascendente para destacar los últimos.
