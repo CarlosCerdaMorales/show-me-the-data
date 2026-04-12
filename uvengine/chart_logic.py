@@ -98,7 +98,6 @@ class ChartDataProcessor:
         elif any(config.get(k) for k in ['CompareSizes', 'EmphasizeIndividual', 'EmphasizeLarger', 'EmphasizeSmaller', 'TouchingBars', 'StackedBars', 'BaseDifference']):
             completed_config['Bar'] = True
 
-        if config.get('TouchingBars'): completed_config['NoGap'] = True
         if config.get('StackedBars'): completed_config['Stacked'] = True
         
         return completed_config

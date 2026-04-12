@@ -35,7 +35,6 @@ const StepMapping = ({
 
   const validXColumns = columns.filter(col => {
     if (selectedRelationship === 'time_series' || selectedIntent === 'deviation_over_time') return isDate(col);
-    if (selectedRelationship === 'part_to_whole' || selectedRelationship === 'deviation') return isText(col);
     return isText(col); 
   });
 

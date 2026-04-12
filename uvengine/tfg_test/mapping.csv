@@ -3,6 +3,5 @@ NonZeroScale,AxisConfigurator,StartAtZero:False
 Line,ChartRenderer,Type:LineChart
 Bar,ChartRenderer,Type:BarChart
 Point,ChartRenderer,Type:ScatterPlot
-Box,ChartRenderer,Type:BoxPlot
 GridLines,StyleConfigurator,ShowGrid:True
 Stacked,SeriesConfigurator,Stacking:Enabled

@@ -38,12 +38,10 @@ features
                     Line    // Líneas
                     Bar     // Barras
                     Point   // Puntos
-                    Box     // Cajas 
 
         optional
             GridLines
             Stacked         // Activa el apilado en barras
-            NoGap           // Elimina el espacio entre barras (gap=0)
             SortedDesc      // Ordenar mayor a menor
             SortedAsc       // Ordenar menor a mayor
 
@@ -76,7 +74,6 @@ constraints
     // --- Partes de un Todo ---
     // Opción A: Barras pegadas
     TouchingBars => Bar
-    TouchingBars => NoGap
 
     // Opción B: Barras apiladas
     StackedBars => Bar

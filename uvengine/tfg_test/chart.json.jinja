@@ -1,5 +1,5 @@
 {
-  "type": "{% if ChartRenderer == 'Type:LineChart' %}line{% elif ChartRenderer == 'Type:BarChart' %}bar{% elif ChartRenderer == 'Type:ScatterPlot' %}scatter{% elif ChartRenderer == 'Type:BoxPlot' %}boxplot{% else %}bar{% endif %}",
+  "type": "{% if ChartRenderer == 'Type:LineChart' %}line{% elif ChartRenderer == 'Type:BarChart' %}bar{% elif ChartRenderer == 'Type:ScatterPlot' %}scatter{% else %}bar{% endif %}",
   "data": {
     "labels": {{ labels | tojson }},
     "datasets": {{ datasets | tojson }}
