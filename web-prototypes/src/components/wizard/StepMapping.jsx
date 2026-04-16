@@ -23,6 +23,8 @@ const StepMapping = ({
   const types = csvData?.types || {};
   const uniqueCounts = csvData?.unique_counts || {};
 
+  const isCount = aggregation === 'count';
+
   const isNumeric = (col) => {
     const t = (types[col] || '').toLowerCase();
     return t.includes('int') || t.includes('float') || t.includes('num') || t.includes('double');
@@ -57,7 +59,7 @@ const StepMapping = ({
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
   const isDuplicateGroupBy = mapping.groupBy && mapping.xColumn === mapping.groupBy;
 
-  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || loading;
+  const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || loading;
 
   useEffect(() => {
     if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
@@ -86,7 +88,7 @@ const StepMapping = ({
         GridLines: gridLines,
         mapping: {
           x: mapping.xColumn,
-          y: mapping.yColumn,
+          y: isCount ? (mapping.yColumn || mapping.xColumn) : mapping.yColumn,
           groupBy: mapping.groupBy,
           threshold: mapping.threshold ? parseFloat(mapping.threshold) : null,
           aggregate: aggregation,
@@ -161,10 +163,30 @@ const StepMapping = ({
           )}
 
           <div>
+            <label className="mapping-label">Operación Matemática:</label>
+            <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} className={getInputClass(null)}>
+              <option value="sum">Suma</option>
+              <option value="mean">Promedio</option>
+              <option value="count">Conteo</option>
+            </select>
+          </div>
+
+          <div>
             <label className="mapping-label">Eje Y (Métrica / Valor):</label>
-            <select value={mapping.yColumn || ''} onChange={(e) => setMapping({...mapping, yColumn: e.target.value})} className={getInputClass(mapping.yColumn ? validY : null)}>
-              <option value="">Selecciona columna...</option>
-              {validYColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+            <select 
+              value={isCount ? '' : (mapping.yColumn || '')} 
+              onChange={(e) => setMapping({...mapping, yColumn: e.target.value})} 
+              className={getInputClass(isCount ? true : (mapping.yColumn ? validY : null))}
+              disabled={isCount}
+            >
+              {isCount ? (
+                <option value="">-- No requerido (Conteo de registros) --</option>
+              ) : (
+                <>
+                  <option value="">Selecciona columna...</option>
+                  {validYColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
+                </>
+              )}
             </select>
           </div>
 
@@ -180,15 +202,6 @@ const StepMapping = ({
               />
             </div>
           )}
-
-          <div>
-            <label className="mapping-label">Operación Matemática:</label>
-            <select value={aggregation} onChange={(e) => setAggregation(e.target.value)} className={getInputClass(null)}>
-              <option value="sum">Suma</option>
-              <option value="mean">Promedio</option>
-              <option value="count">Conteo</option>
-            </select>
-          </div>
 
           <div className="mapping-box">
              <label className="mapping-label" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>

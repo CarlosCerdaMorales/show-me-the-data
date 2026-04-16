@@ -149,7 +149,7 @@ class ChartDataProcessor:
     @classmethod
     def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False):
         group_cols = [x_col, group_by]
-        df_grouped = df_clean.groupby(group_cols)[y_col].agg(agg_func).reset_index()
+        df_grouped = df_clean.groupby(group_cols, observed=False)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
         
         if granularity or is_binned: 
@@ -190,17 +190,18 @@ class ChartDataProcessor:
             })
             
         op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
+        y_col_display = "Registros" if agg_func == 'count' else y_col
         
         if is_base_diff:
-            config['chartTitle'] = f"Diferencia de {y_col} respecto a la base ({threshold}) agrupado por {group_by}"
+            config['chartTitle'] = f"Diferencia de {y_col_display} respecto a la base ({threshold}) agrupado por {group_by}"
         else:
-            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col} por {x_col} agrupado por {group_by}"
+            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col_display} por {x_col} agrupado por {group_by}"
             
         return labels, datasets, config
 
     @classmethod
     def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, is_binned=False):
-        df_grouped = df_clean.groupby(x_col)[y_col].agg(agg_func).reset_index()
+        df_grouped = df_clean.groupby(x_col, observed=False)[y_col].agg(agg_func).reset_index()
         
         if config.get('EmphasizeLarger'):
             df_grouped = df_grouped.sort_values(by=y_col, ascending=False)
@@ -216,14 +217,16 @@ class ChartDataProcessor:
         
         is_time_series = config.get('TimeSeries', False) or config.get('ShowEvolution', False) or config.get('DeviationOverTime') or granularity is not None
         
+        y_col_display = "Registros" if agg_func == 'count' else y_col
+        
         if config.get('BaseDifference') and threshold is not None:
             values = [v - threshold for v in values]
             bg_colors = [f'rgba({FEW_PALETTE[3][0]}, {FEW_PALETTE[3][1]}, {FEW_PALETTE[3][2]}, 0.6)' if v >= 0 else f'rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 0.6)' for v in values]
             border_colors = [f'rgba({FEW_PALETTE[3][0]}, {FEW_PALETTE[3][1]}, {FEW_PALETTE[3][2]}, 1)' if v >= 0 else f'rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 1)' for v in values]
-            title_text = f"Diferencia de {y_col} respecto a la base ({threshold})"
+            title_text = f"Diferencia de {y_col_display} respecto a la base ({threshold})"
         else:
             op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
-            title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col}"
+            title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col_display}"
 
             if not is_time_series:
                 bg_colors = [f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 0.6)' for i in range(len(labels))]
@@ -294,11 +297,13 @@ class ChartEngineOrchestrator:
         mapping = config.get('mapping', {})
         
         x_col = mapping.get('x')
-        y_col = mapping.get('y')
+        agg_func = mapping.get('aggregate', 'sum')
+        
+        y_col = mapping.get('y') if agg_func != 'count' else (mapping.get('y') or x_col)
+        
         group_by = mapping.get('groupBy')
         threshold = mapping.get('threshold')
         granularity = mapping.get('granularity')
-        agg_func = mapping.get('aggregate', 'sum')
         bins = mapping.get('bins')
 
         df = CSVAnalyzer._load_csv(UPLOADED_CSV_PATH)
@@ -306,7 +311,7 @@ class ChartEngineOrchestrator:
         if x_col not in df.columns or y_col not in df.columns:
              raise ValueError(f"Las columnas '{x_col}' o '{y_col}' no existen en el CSV.")
 
-        cols_needed = [x_col, y_col]
+        cols_needed = [x_col] if x_col == y_col else [x_col, y_col]
         if group_by:
             cols_needed.append(group_by)
             
