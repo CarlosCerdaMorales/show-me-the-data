@@ -84,7 +84,8 @@ class CSVAnalyzer:
     def analyze(cls, filepath):
         df = cls._load_csv(filepath)
         column_types = cls._detect_column_types(df)
-        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df)
+        unique_counts = {col: int(df[col].nunique(dropna=True)) for col in df.columns}
+        return list(df.columns), df.head(5).to_dict(orient='records'), column_types, len(df), unique_counts
 
 
 class ChartDataProcessor:
@@ -127,7 +128,10 @@ class ChartDataProcessor:
         return df_clean
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None):
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, bins=None):
+        if bins and pd.api.types.is_numeric_dtype(df_clean[x_col]):
+            df_clean[x_col] = pd.cut(df_clean[x_col], bins=bins).astype(str)
+
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
@@ -179,7 +183,10 @@ class ChartDataProcessor:
         return labels, datasets, config
 
     @classmethod
-    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None):
+    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, bins=None):
+        if bins and pd.api.types.is_numeric_dtype(df_clean[x_col]):
+            df_clean[x_col] = pd.cut(df_clean[x_col], bins=bins).astype(str)
+
         df_grouped = df_clean.groupby(x_col)[y_col].agg(agg_func).reset_index()
         
         if config.get('EmphasizeLarger'):
@@ -279,6 +286,7 @@ class ChartEngineOrchestrator:
         threshold = mapping.get('threshold')
         granularity = mapping.get('granularity')
         agg_func = mapping.get('aggregate', 'sum')
+        bins = mapping.get('bins')
 
         df = CSVAnalyzer._load_csv(UPLOADED_CSV_PATH)
         
@@ -293,9 +301,9 @@ class ChartEngineOrchestrator:
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
         if group_by:
-            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold)
+            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, bins)
         else:
-            labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold)
+            labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold, bins)
 
         user_input['config'] = config
         user_input['config']['labels'] = labels

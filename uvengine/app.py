@@ -19,13 +19,14 @@ def upload_csv():
     try:
         file.save(UPLOADED_CSV_PATH)
         
-        columns, preview, types, total_rows = CSVAnalyzer.analyze(UPLOADED_CSV_PATH)
+        columns, preview, types, total_rows, unique_counts = CSVAnalyzer.analyze(UPLOADED_CSV_PATH)
         
         return jsonify({
             "columns": columns,
             "preview": preview,
             "types": types,
-            "total_rows": total_rows
+            "total_rows": total_rows,
+            "unique_counts": unique_counts
         })
 
     except Exception as e:

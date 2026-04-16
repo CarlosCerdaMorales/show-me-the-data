@@ -16,8 +16,12 @@ const StepMapping = ({
 }) => {
   const [granularity, setGranularity] = useState('month_year');
   const [aggregation, setAggregation] = useState('sum');
+  
+  const [bins, setBins] = useState('5');
+  const [gridLines, setGridLines] = useState(true);
 
   const types = csvData?.types || {};
+  const uniqueCounts = csvData?.unique_counts || {};
 
   const isNumeric = (col) => {
     const t = (types[col] || '').toLowerCase();
@@ -35,23 +39,25 @@ const StepMapping = ({
 
   const validXColumns = columns.filter(col => {
     if (selectedRelationship === 'time_series' || selectedIntent === 'deviation_over_time') return isDate(col);
-    return isText(col); 
+    return isText(col) || isNumeric(col); 
   });
 
-  const validYColumns = columns.filter(col => isNumeric(col));
+  const validYColumns = columns.filter(col => isNumeric(col) && col !== mapping.xColumn);
 
   const availableXColumns = validXColumns.filter(col => col !== mapping.groupBy);
 
-  const availableGroupByColumns = columns.filter(isText).filter(col => 
+  const availableGroupByColumns = columns.filter(col => isText(col) || isNumeric(col)).filter(col => 
     col !== mapping.xColumn
   );
+
+  const needsBinning = mapping.xColumn && isNumeric(mapping.xColumn) && uniqueCounts[mapping.xColumn] >= 16;
 
   const validX = mapping.xColumn ? validXColumns.includes(mapping.xColumn) : true;
   const validY = mapping.yColumn ? validYColumns.includes(mapping.yColumn) : true;
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
   const isDuplicateGroupBy = mapping.groupBy && mapping.xColumn === mapping.groupBy;
 
-  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicateGroupBy || loading;
+  const disableGenerate = !mapping.xColumn || !mapping.yColumn || !validX || !validY || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || loading;
 
   useEffect(() => {
     if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
@@ -77,14 +83,15 @@ const StepMapping = ({
         PartToWhole: selectedRelationship === 'part_to_whole',
         Deviation: selectedRelationship === 'deviation',
         [UVL_FEATURES[selectedIntent]]: true,
-        GridLines: true,
+        GridLines: gridLines,
         mapping: {
           x: mapping.xColumn,
           y: mapping.yColumn,
           groupBy: mapping.groupBy,
           threshold: mapping.threshold ? parseFloat(mapping.threshold) : null,
           aggregate: aggregation,
-          granularity: isDate(mapping.xColumn) ? granularity : null
+          granularity: isDate(mapping.xColumn) ? granularity : null,
+          bins: needsBinning ? parseInt(bins) : null
         }
       }
     };
@@ -116,6 +123,21 @@ const StepMapping = ({
               {availableXColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
             </select>
           </div>
+
+          {needsBinning && (
+            <div className="mapping-box-alert">
+              <label className="mapping-label-alert">La variable tiene muchos valores. Agrupar en tramos:</label>
+              <select value={bins} onChange={(e) => setBins(e.target.value)} className={getInputClass(bins ? true : false)}>
+                <option value="2">2 tramos</option>
+                <option value="3">3 tramos</option>
+                <option value="4">4 tramos</option>
+                <option value="5">5 tramos</option>
+                <option value="6">6 tramos</option>
+                <option value="7">7 tramos</option>
+                <option value="8">8 tramos</option>
+              </select>
+            </div>
+          )}
 
           {isDate(mapping.xColumn) && (
             <div className="mapping-box">
@@ -166,6 +188,13 @@ const StepMapping = ({
               <option value="mean">Promedio</option>
               <option value="count">Conteo</option>
             </select>
+          </div>
+
+          <div className="mapping-box">
+             <label className="mapping-label" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+               <input type="checkbox" checked={gridLines} onChange={(e) => setGridLines(e.target.checked)} />
+               Mostrar líneas de cuadrícula
+             </label>
           </div>
 
           <button 
