@@ -126,15 +126,15 @@ const StepMapping = ({
 
           {needsBinning && (
             <div className="mapping-box-alert">
-              <label className="mapping-label-alert">La variable tiene muchos valores. Agrupar en tramos:</label>
+              <label className="mapping-label-alert">La variable tiene muchos valores. Agrupar en intervalos:</label>
               <select value={bins} onChange={(e) => setBins(e.target.value)} className={getInputClass(bins ? true : false)}>
-                <option value="2">2 tramos</option>
-                <option value="3">3 tramos</option>
-                <option value="4">4 tramos</option>
-                <option value="5">5 tramos</option>
-                <option value="6">6 tramos</option>
-                <option value="7">7 tramos</option>
-                <option value="8">8 tramos</option>
+                <option value="2">2 intervalos</option>
+                <option value="3">3 intervalos</option>
+                <option value="4">4 intervalos</option>
+                <option value="5">5 intervalos</option>
+                <option value="6">6 intervalos</option>
+                <option value="7">7 intervalos</option>
+                <option value="8">8 intervalos</option>
               </select>
             </div>
           )}

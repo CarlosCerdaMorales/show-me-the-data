@@ -128,15 +128,31 @@ class ChartDataProcessor:
         return df_clean
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, bins=None):
-        if bins and pd.api.types.is_numeric_dtype(df_clean[x_col]):
-            df_clean[x_col] = pd.cut(df_clean[x_col], bins=bins).astype(str)
+    def apply_binning(cls, df, x_col, bins):
+        if bins and pd.api.types.is_numeric_dtype(df[x_col]):
+            bins_count = int(bins)
+            _, cut_bins = pd.cut(df[x_col], bins=bins_count, retbins=True, include_lowest=True)
+            
+            labels = []
+            for i in range(len(cut_bins)-1):
+                left = int(np.floor(cut_bins[i])) if i == 0 else int(np.ceil(cut_bins[i]))
+                right = int(np.ceil(cut_bins[i+1]))
+                labels.append(f"({left}, {right}]")
+            
+            if len(set(labels)) < len(labels):
+                labels = [f"{lbl} #{i+1}" for i, lbl in enumerate(labels)]
+                
+            df[x_col] = pd.cut(df[x_col], bins=cut_bins, labels=labels, include_lowest=True)
+            return True
+        return False
 
+    @classmethod
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False):
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
         
-        if granularity: 
+        if granularity or is_binned: 
             df_pivot = df_pivot.sort_index()
 
         is_base_diff = config.get('BaseDifference') and threshold is not None
@@ -183,10 +199,7 @@ class ChartDataProcessor:
         return labels, datasets, config
 
     @classmethod
-    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, bins=None):
-        if bins and pd.api.types.is_numeric_dtype(df_clean[x_col]):
-            df_clean[x_col] = pd.cut(df_clean[x_col], bins=bins).astype(str)
-
+    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, is_binned=False):
         df_grouped = df_clean.groupby(x_col)[y_col].agg(agg_func).reset_index()
         
         if config.get('EmphasizeLarger'):
@@ -195,7 +208,7 @@ class ChartDataProcessor:
         elif config.get('EmphasizeSmaller'):
             df_grouped = df_grouped.sort_values(by=y_col, ascending=True)
             config['SortedAsc'] = True
-        elif granularity:
+        elif granularity or is_binned:
             df_grouped = df_grouped.sort_values(by=x_col)
 
         labels = df_grouped[x_col].astype(str).tolist()
@@ -298,12 +311,15 @@ class ChartEngineOrchestrator:
             cols_needed.append(group_by)
             
         df_clean = ChartDataProcessor.clean_and_format_dates(df[cols_needed], x_col, granularity)
+        
+        is_binned = ChartDataProcessor.apply_binning(df_clean, x_col, bins)
+        
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
         if group_by:
-            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, bins)
+            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, is_binned)
         else:
-            labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold, bins)
+            labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold, is_binned)
 
         user_input['config'] = config
         user_input['config']['labels'] = labels
