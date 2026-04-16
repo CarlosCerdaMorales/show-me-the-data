@@ -115,6 +115,7 @@ const Proto = () => {
           onGenerate={() => setStep(3)} 
           onBack={() => setStep(1)}
           loading={loading}
+          csvData={csvData}
         />
       )}
 
