@@ -130,17 +130,29 @@ class ChartDataProcessor:
     @classmethod
     def apply_binning(cls, df, col_name, bins):
         if bins and pd.api.types.is_numeric_dtype(df[col_name]):
-            bins_count = int(bins)
-            _, cut_bins = pd.cut(df[col_name], bins=bins_count, retbins=True, include_lowest=True)
+            _min = df[col_name].min()
+            _max = df[col_name].max()
             
+            if pd.isna(_min) or pd.isna(_max):
+                return False
+
+            if _min == _max:
+                df[col_name] = df[col_name].astype(str)
+                return True
+
+            bins_count = int(bins)
+            
+            raw_boundaries = np.linspace(int(np.floor(_min)), int(np.ceil(_max)), bins_count + 1)
+            cut_bins = np.unique(np.round(raw_boundaries).astype(int))
+            
+            if len(cut_bins) <= 1:
+                cut_bins = [int(np.floor(_min)), int(np.ceil(_max))]
+                if cut_bins[0] == cut_bins[1]:
+                    cut_bins[1] += 1
+                    
             labels = []
             for i in range(len(cut_bins)-1):
-                left = int(np.floor(cut_bins[i])) if i == 0 else int(np.ceil(cut_bins[i]))
-                right = int(np.ceil(cut_bins[i+1]))
-                labels.append(f"({left}, {right}]")
-            
-            if len(set(labels)) < len(labels):
-                labels = [f"{lbl} #{i+1}" for i, lbl in enumerate(labels)]
+                labels.append(f"({cut_bins[i]}, {cut_bins[i+1]}]")
                 
             df[col_name] = pd.cut(df[col_name], bins=cut_bins, labels=labels, include_lowest=True)
             return True
