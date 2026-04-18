@@ -170,3 +170,39 @@
   font-size: 14px;
   text-align: center;
 }
+
+/* --- CLASES NUEVAS PARA ALIAS, UNIDADES Y CHECKBOX --- */
+
+.mapping-alias-wrapper {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.mapping-alias-wrapper-sm {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mapping-input-alias {
+  flex: 1;
+  padding: 6px;
+}
+
+.mapping-input-unit {
+  width: 120px;
+  padding: 6px;
+}
+
+.mapping-alert-spaced {
+  margin-top: 8px;
+}
+
+.mapping-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

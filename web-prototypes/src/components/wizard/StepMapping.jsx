@@ -165,14 +165,13 @@ const StepMapping = ({
           </div>
 
           {mapping.xColumn && (
-            <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '16px' }}>
+            <div className="mapping-alias-wrapper">
               <input 
                 type="text" 
                 placeholder={`Alias para "${mapping.xColumn}"`} 
                 value={xAlias} 
                 onChange={(e) => setXAlias(e.target.value)} 
-                className={getInputClass(null)} 
-                style={{ flex: 1, padding: '6px' }}
+                className={`${getInputClass(null)} mapping-input-alias`} 
               />
               {isNumeric(mapping.xColumn) && (
                 <input 
@@ -180,8 +179,7 @@ const StepMapping = ({
                   placeholder="Unidad (ej. km)" 
                   value={xUnit} 
                   onChange={(e) => setXUnit(e.target.value)} 
-                  className={getInputClass(null)} 
-                  style={{ width: '120px', padding: '6px' }}
+                  className={`${getInputClass(null)} mapping-input-unit`} 
                 />
               )}
             </div>
@@ -222,14 +220,13 @@ const StepMapping = ({
               </select>
 
               {mapping.groupBy && (
-                <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '8px' }}>
+                <div className="mapping-alias-wrapper-sm">
                   <input 
                     type="text" 
                     placeholder={`Alias para "${mapping.groupBy}"`} 
                     value={groupByAlias} 
                     onChange={(e) => setGroupByAlias(e.target.value)} 
-                    className={getInputClass(null)} 
-                    style={{ flex: 1, padding: '6px' }}
+                    className={`${getInputClass(null)} mapping-input-alias`} 
                   />
                   {isNumeric(mapping.groupBy) && (
                     <input 
@@ -237,15 +234,14 @@ const StepMapping = ({
                       placeholder="Unidad" 
                       value={groupByUnit} 
                       onChange={(e) => setGroupByUnit(e.target.value)} 
-                      className={getInputClass(null)} 
-                      style={{ width: '120px', padding: '6px' }}
+                      className={`${getInputClass(null)} mapping-input-unit`} 
                     />
                   )}
                 </div>
               )}
 
               {needsGroupByBinning && (
-                <div className="mapping-box-alert" style={{ marginTop: '8px' }}>
+                <div className="mapping-box-alert mapping-alert-spaced">
                   <label className="mapping-label-alert">La subcategoría tiene muchos valores. Agrupar en intervalos:</label>
                   <select value={groupByBins} onChange={(e) => setGroupByBins(e.target.value)} className={getInputClass(groupByBins ? true : false)}>
                     <option value="2">2 intervalos</option>
@@ -290,14 +286,13 @@ const StepMapping = ({
           </div>
 
           {mapping.yColumn && !isCount && (
-            <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '16px' }}>
+            <div className="mapping-alias-wrapper">
               <input 
                 type="text" 
                 placeholder={`Alias para "${mapping.yColumn}"`} 
                 value={yAlias} 
                 onChange={(e) => setYAlias(e.target.value)} 
-                className={getInputClass(null)} 
-                style={{ flex: 1, padding: '6px' }}
+                className={`${getInputClass(null)} mapping-input-alias`} 
               />
               {isNumeric(mapping.yColumn) && (
                 <input 
@@ -305,8 +300,7 @@ const StepMapping = ({
                   placeholder="Unidad (ej. $)" 
                   value={yUnit} 
                   onChange={(e) => setYUnit(e.target.value)} 
-                  className={getInputClass(null)} 
-                  style={{ width: '120px', padding: '6px' }}
+                  className={`${getInputClass(null)} mapping-input-unit`} 
                 />
               )}
             </div>
@@ -326,7 +320,7 @@ const StepMapping = ({
           )}
 
           <div className="mapping-box">
-             <label className="mapping-label" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+             <label className="mapping-label mapping-checkbox-label">
                <input type="checkbox" checked={gridLines} onChange={(e) => setGridLines(e.target.checked)} />
                Mostrar líneas de cuadrícula
              </label>
