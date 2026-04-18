@@ -147,7 +147,7 @@ class ChartDataProcessor:
         return False
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False):
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False, x_alias=None, y_alias=None, x_unit=None, y_unit=None):
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols, observed=False)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
@@ -190,17 +190,22 @@ class ChartDataProcessor:
             })
             
         op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
-        y_col_display = "Registros" if agg_func == 'count' else y_col
+        
+        display_x = x_alias if x_alias else x_col
+        if x_unit: display_x = f"{display_x} ({x_unit})"
+        
+        display_y = "Registros" if agg_func == 'count' else (y_alias if y_alias else y_col)
+        if y_unit and agg_func != 'count': display_y = f"{display_y} ({y_unit})"
         
         if is_base_diff:
-            config['chartTitle'] = f"Diferencia de {y_col_display} respecto a la base ({threshold}) agrupado por {group_by}"
+            config['chartTitle'] = f"Diferencia de {display_y} respecto a la base ({threshold}) agrupado por {group_by}"
         else:
-            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {y_col_display} por {x_col} agrupado por {group_by}"
+            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {display_y} por {display_x} agrupado por {group_by}"
             
         return labels, datasets, config
 
     @classmethod
-    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, is_binned=False):
+    def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, is_binned=False, x_alias=None, y_alias=None, x_unit=None, y_unit=None):
         df_grouped = df_clean.groupby(x_col, observed=False)[y_col].agg(agg_func).reset_index()
         
         if config.get('EmphasizeLarger'):
@@ -217,16 +222,20 @@ class ChartDataProcessor:
         
         is_time_series = config.get('TimeSeries', False) or config.get('ShowEvolution', False) or config.get('DeviationOverTime') or granularity is not None
         
-        y_col_display = "Registros" if agg_func == 'count' else y_col
+        display_x = x_alias if x_alias else x_col
+        if x_unit: display_x = f"{display_x} ({x_unit})"
+        
+        display_y = "Registros" if agg_func == 'count' else (y_alias if y_alias else y_col)
+        if y_unit and agg_func != 'count': display_y = f"{display_y} ({y_unit})"
         
         if config.get('BaseDifference') and threshold is not None:
             values = [v - threshold for v in values]
             bg_colors = [f'rgba({FEW_PALETTE[3][0]}, {FEW_PALETTE[3][1]}, {FEW_PALETTE[3][2]}, 0.6)' if v >= 0 else f'rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 0.6)' for v in values]
             border_colors = [f'rgba({FEW_PALETTE[3][0]}, {FEW_PALETTE[3][1]}, {FEW_PALETTE[3][2]}, 1)' if v >= 0 else f'rgba({FEW_PALETTE[8][0]}, {FEW_PALETTE[8][1]}, {FEW_PALETTE[8][2]}, 1)' for v in values]
-            title_text = f"Diferencia de {y_col_display} respecto a la base ({threshold})"
+            title_text = f"Diferencia de {display_y} respecto a la base ({threshold})"
         else:
             op_display = {"sum": "Total", "mean": "Promedio", "count": "Recuento"}
-            title_text = f"{op_display.get(agg_func, 'Datos')} de {y_col_display}"
+            title_text = f"{op_display.get(agg_func, 'Datos')} de {display_y}"
 
             if not is_time_series:
                 bg_colors = [f'rgba({FEW_PALETTE[i % len(FEW_PALETTE)][0]}, {FEW_PALETTE[i % len(FEW_PALETTE)][1]}, {FEW_PALETTE[i % len(FEW_PALETTE)][2]}, 0.6)' for i in range(len(labels))]
@@ -235,7 +244,7 @@ class ChartDataProcessor:
                 bg_colors = f"rgba({FEW_PALETTE[1][0]}, {FEW_PALETTE[1][1]}, {FEW_PALETTE[1][2]}, 0.2)"
                 border_colors = f"rgba({FEW_PALETTE[1][0]}, {FEW_PALETTE[1][1]}, {FEW_PALETTE[1][2]}, 1)"
 
-        config['chartTitle'] = f"{title_text} por {x_col}"
+        config['chartTitle'] = f"{title_text} por {display_x}"
 
         final_data = [{"x": l, "y": v} for l, v in zip(labels, values)] if config.get('Point') else values
 
@@ -305,6 +314,11 @@ class ChartEngineOrchestrator:
         threshold = mapping.get('threshold')
         granularity = mapping.get('granularity')
         bins = mapping.get('bins')
+        
+        x_alias = mapping.get('xAlias')
+        y_alias = mapping.get('yAlias')
+        x_unit = mapping.get('xUnit')
+        y_unit = mapping.get('yUnit')
 
         df = CSVAnalyzer._load_csv(UPLOADED_CSV_PATH)
         
@@ -322,9 +336,15 @@ class ChartEngineOrchestrator:
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
         if group_by:
-            labels, datasets, config = ChartDataProcessor.process_grouped_data(df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, is_binned)
+            labels, datasets, config = ChartDataProcessor.process_grouped_data(
+                df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, is_binned,
+                x_alias=x_alias, y_alias=y_alias, x_unit=x_unit, y_unit=y_unit
+            )
         else:
-            labels, datasets, config = ChartDataProcessor.process_simple_data(df_clean, x_col, y_col, agg_func, granularity, config, threshold, is_binned)
+            labels, datasets, config = ChartDataProcessor.process_simple_data(
+                df_clean, x_col, y_col, agg_func, granularity, config, threshold, is_binned,
+                x_alias=x_alias, y_alias=y_alias, x_unit=x_unit, y_unit=y_unit
+            )
 
         user_input['config'] = config
         user_input['config']['labels'] = labels

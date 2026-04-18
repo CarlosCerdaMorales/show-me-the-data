@@ -20,6 +20,11 @@ const StepMapping = ({
   const [bins, setBins] = useState('5');
   const [gridLines, setGridLines] = useState(true);
 
+  const [xAlias, setXAlias] = useState('');
+  const [yAlias, setYAlias] = useState('');
+  const [xUnit, setXUnit] = useState('');
+  const [yUnit, setYUnit] = useState('');
+
   const types = csvData?.types || {};
   const uniqueCounts = csvData?.unique_counts || {};
 
@@ -62,6 +67,16 @@ const StepMapping = ({
   const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || loading;
 
   useEffect(() => {
+    setXAlias('');
+    setXUnit('');
+  }, [mapping.xColumn]);
+
+  useEffect(() => {
+    setYAlias('');
+    setYUnit('');
+  }, [mapping.yColumn]);
+
+  useEffect(() => {
     if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
         setMapping(prev => ({ ...prev, xColumn: '' }));
     }
@@ -93,7 +108,11 @@ const StepMapping = ({
           threshold: mapping.threshold ? parseFloat(mapping.threshold) : null,
           aggregate: aggregation,
           granularity: isDate(mapping.xColumn) ? granularity : null,
-          bins: needsBinning ? parseInt(bins) : null
+          bins: needsBinning ? parseInt(bins) : null,
+          xAlias: xAlias.trim() || null,
+          yAlias: yAlias.trim() || null,
+          xUnit: xUnit.trim() || null,
+          yUnit: yUnit.trim() || null
         }
       }
     };
@@ -125,6 +144,29 @@ const StepMapping = ({
               {availableXColumns.map(col => <option key={col} value={col}>{col} {types[col] ? `— ${types[col]}` : ''}</option>)}
             </select>
           </div>
+
+          {mapping.xColumn && (
+            <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '16px' }}>
+              <input 
+                type="text" 
+                placeholder={`Alias para "${mapping.xColumn}"`} 
+                value={xAlias} 
+                onChange={(e) => setXAlias(e.target.value)} 
+                className={getInputClass(null)} 
+                style={{ flex: 1, padding: '6px' }}
+              />
+              {isNumeric(mapping.xColumn) && (
+                <input 
+                  type="text" 
+                  placeholder="Unidad (ej. km)" 
+                  value={xUnit} 
+                  onChange={(e) => setXUnit(e.target.value)} 
+                  className={getInputClass(null)} 
+                  style={{ width: '120px', padding: '6px' }}
+                />
+              )}
+            </div>
+          )}
 
           {needsBinning && (
             <div className="mapping-box-alert">
@@ -189,6 +231,29 @@ const StepMapping = ({
               )}
             </select>
           </div>
+
+          {mapping.yColumn && !isCount && (
+            <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '16px' }}>
+              <input 
+                type="text" 
+                placeholder={`Alias para "${mapping.yColumn}"`} 
+                value={yAlias} 
+                onChange={(e) => setYAlias(e.target.value)} 
+                className={getInputClass(null)} 
+                style={{ flex: 1, padding: '6px' }}
+              />
+              {isNumeric(mapping.yColumn) && (
+                <input 
+                  type="text" 
+                  placeholder="Unidad (ej. $)" 
+                  value={yUnit} 
+                  onChange={(e) => setYUnit(e.target.value)} 
+                  className={getInputClass(null)} 
+                  style={{ width: '120px', padding: '6px' }}
+                />
+              )}
+            </div>
+          )}
 
           {selectedRelationship === 'deviation' && (
             <div className="mapping-box-alert">
