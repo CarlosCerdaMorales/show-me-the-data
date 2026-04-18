@@ -47,6 +47,9 @@ def generate_chart():
             
         if mapping.get('groupBy') and mapping.get('x') == mapping.get('groupBy'):
             return jsonify({"error": "Validación fallida: La subcategoría de agrupación no puede ser idéntica al Eje X."}), 400
+        
+        if mapping.get('groupBy') and mapping.get('y') == mapping.get('groupBy'):
+            return jsonify({"error": "Validación fallida: La subcategoría de agrupación no puede ser idéntica al Eje Y."}), 400
                 
         resolved_chart_json = ChartEngineOrchestrator.process_and_run(payload)
         return jsonify(resolved_chart_json)

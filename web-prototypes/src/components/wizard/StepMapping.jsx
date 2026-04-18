@@ -53,12 +53,12 @@ const StepMapping = ({
     return isText(col) || isNumeric(col); 
   });
 
-  const validYColumns = columns.filter(col => isNumeric(col) && col !== mapping.xColumn);
+  const validYColumns = columns.filter(col => isNumeric(col) && col !== mapping.xColumn && col !== mapping.groupBy);
 
   const availableXColumns = validXColumns.filter(col => col !== mapping.groupBy);
 
   const availableGroupByColumns = columns.filter(col => isText(col) || isNumeric(col)).filter(col => 
-    col !== mapping.xColumn
+    col !== mapping.xColumn && (isCount || col !== mapping.yColumn)
   );
 
   const needsBinning = mapping.xColumn && isNumeric(mapping.xColumn) && uniqueCounts[mapping.xColumn] >= 16;
@@ -68,8 +68,10 @@ const StepMapping = ({
   const validY = mapping.yColumn ? validYColumns.includes(mapping.yColumn) : true;
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
   const isDuplicateGroupBy = mapping.groupBy && mapping.xColumn === mapping.groupBy;
+  
+  const isDuplicateYGroupBy = !isCount && mapping.groupBy && mapping.yColumn === mapping.groupBy;
 
-  const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || (needsGroupByBinning && !groupByBins) || loading;
+  const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || isDuplicateYGroupBy || (needsBinning && !bins) || (needsGroupByBinning && !groupByBins) || loading;
 
   useEffect(() => {
     setXAlias('');
@@ -93,12 +95,15 @@ const StepMapping = ({
     if (mapping.yColumn && !validYColumns.includes(mapping.yColumn)) {
         setMapping(prev => ({ ...prev, yColumn: '' }));
     }
+    if (mapping.groupBy && !availableGroupByColumns.includes(mapping.groupBy)) {
+        setMapping(prev => ({ ...prev, groupBy: '' }));
+    }
     
     const usesGroupBy = selectedRelationship === 'part_to_whole' || selectedIntent === 'deviation_over_time';
     if (mapping.groupBy && !usesGroupBy) {
         setMapping(prev => ({ ...prev, groupBy: '' }));
     }
-  }, [selectedRelationship, columns, types, selectedIntent]);
+  }, [selectedRelationship, columns, types, selectedIntent, mapping.xColumn, mapping.yColumn, isCount]);
 
   const handleGenerate = () => {
     const request_from_frontend = {
