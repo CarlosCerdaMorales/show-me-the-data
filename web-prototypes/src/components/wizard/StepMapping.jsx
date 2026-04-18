@@ -25,6 +25,10 @@ const StepMapping = ({
   const [xUnit, setXUnit] = useState('');
   const [yUnit, setYUnit] = useState('');
 
+  const [groupByBins, setGroupByBins] = useState('5');
+  const [groupByAlias, setGroupByAlias] = useState('');
+  const [groupByUnit, setGroupByUnit] = useState('');
+
   const types = csvData?.types || {};
   const uniqueCounts = csvData?.unique_counts || {};
 
@@ -58,13 +62,14 @@ const StepMapping = ({
   );
 
   const needsBinning = mapping.xColumn && isNumeric(mapping.xColumn) && uniqueCounts[mapping.xColumn] >= 16;
+  const needsGroupByBinning = mapping.groupBy && isNumeric(mapping.groupBy) && uniqueCounts[mapping.groupBy] >= 16;
 
   const validX = mapping.xColumn ? validXColumns.includes(mapping.xColumn) : true;
   const validY = mapping.yColumn ? validYColumns.includes(mapping.yColumn) : true;
   const validThreshold = selectedRelationship === 'deviation' ? (mapping.threshold !== '' && !isNaN(mapping.threshold)) : true;
   const isDuplicateGroupBy = mapping.groupBy && mapping.xColumn === mapping.groupBy;
 
-  const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || loading;
+  const disableGenerate = !mapping.xColumn || (!isCount && !mapping.yColumn) || !validX || (!isCount && !validY) || !validThreshold || isDuplicateGroupBy || (needsBinning && !bins) || (needsGroupByBinning && !groupByBins) || loading;
 
   useEffect(() => {
     setXAlias('');
@@ -75,6 +80,11 @@ const StepMapping = ({
     setYAlias('');
     setYUnit('');
   }, [mapping.yColumn]);
+
+  useEffect(() => {
+    setGroupByAlias('');
+    setGroupByUnit('');
+  }, [mapping.groupBy]);
 
   useEffect(() => {
     if (mapping.xColumn && !validXColumns.includes(mapping.xColumn)) {
@@ -112,7 +122,11 @@ const StepMapping = ({
           xAlias: xAlias.trim() || null,
           yAlias: yAlias.trim() || null,
           xUnit: xUnit.trim() || null,
-          yUnit: yUnit.trim() || null
+          yUnit: yUnit.trim() || null,
+          
+          groupByBins: needsGroupByBinning ? parseInt(groupByBins) : null,
+          groupByAlias: groupByAlias.trim() || null,
+          groupByUnit: groupByUnit.trim() || null
         }
       }
     };
@@ -201,6 +215,44 @@ const StepMapping = ({
                 <option value="">Ninguno (Gráfico simple)</option>
                 {availableGroupByColumns.map(col => <option key={col} value={col}>{col}</option>)}
               </select>
+
+              {mapping.groupBy && (
+                <div className="mapping-box-inline" style={{ display: 'flex', gap: '10px', marginTop: '8px', marginBottom: '8px' }}>
+                  <input 
+                    type="text" 
+                    placeholder={`Alias para "${mapping.groupBy}"`} 
+                    value={groupByAlias} 
+                    onChange={(e) => setGroupByAlias(e.target.value)} 
+                    className={getInputClass(null)} 
+                    style={{ flex: 1, padding: '6px' }}
+                  />
+                  {isNumeric(mapping.groupBy) && (
+                    <input 
+                      type="text" 
+                      placeholder="Unidad" 
+                      value={groupByUnit} 
+                      onChange={(e) => setGroupByUnit(e.target.value)} 
+                      className={getInputClass(null)} 
+                      style={{ width: '120px', padding: '6px' }}
+                    />
+                  )}
+                </div>
+              )}
+
+              {needsGroupByBinning && (
+                <div className="mapping-box-alert" style={{ marginTop: '8px' }}>
+                  <label className="mapping-label-alert">La subcategoría tiene muchos valores. Agrupar en intervalos:</label>
+                  <select value={groupByBins} onChange={(e) => setGroupByBins(e.target.value)} className={getInputClass(groupByBins ? true : false)}>
+                    <option value="2">2 intervalos</option>
+                    <option value="3">3 intervalos</option>
+                    <option value="4">4 intervalos</option>
+                    <option value="5">5 intervalos</option>
+                    <option value="6">6 intervalos</option>
+                    <option value="7">7 intervalos</option>
+                    <option value="8">8 intervalos</option>
+                  </select>
+                </div>
+              )}
             </div>
           )}
 

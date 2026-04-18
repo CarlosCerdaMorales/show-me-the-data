@@ -128,10 +128,10 @@ class ChartDataProcessor:
         return df_clean
 
     @classmethod
-    def apply_binning(cls, df, x_col, bins):
-        if bins and pd.api.types.is_numeric_dtype(df[x_col]):
+    def apply_binning(cls, df, col_name, bins):
+        if bins and pd.api.types.is_numeric_dtype(df[col_name]):
             bins_count = int(bins)
-            _, cut_bins = pd.cut(df[x_col], bins=bins_count, retbins=True, include_lowest=True)
+            _, cut_bins = pd.cut(df[col_name], bins=bins_count, retbins=True, include_lowest=True)
             
             labels = []
             for i in range(len(cut_bins)-1):
@@ -142,12 +142,12 @@ class ChartDataProcessor:
             if len(set(labels)) < len(labels):
                 labels = [f"{lbl} #{i+1}" for i, lbl in enumerate(labels)]
                 
-            df[x_col] = pd.cut(df[x_col], bins=cut_bins, labels=labels, include_lowest=True)
+            df[col_name] = pd.cut(df[col_name], bins=cut_bins, labels=labels, include_lowest=True)
             return True
         return False
 
     @classmethod
-    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False, x_alias=None, y_alias=None, x_unit=None, y_unit=None):
+    def process_grouped_data(cls, df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold=None, is_binned=False, x_alias=None, y_alias=None, x_unit=None, y_unit=None, groupby_alias=None, groupby_unit=None):
         group_cols = [x_col, group_by]
         df_grouped = df_clean.groupby(group_cols, observed=False)[y_col].agg(agg_func).reset_index()
         df_pivot = df_grouped.pivot(index=x_col, columns=group_by, values=y_col).fillna(0)
@@ -196,11 +196,14 @@ class ChartDataProcessor:
         
         display_y = "Registros" if agg_func == 'count' else (y_alias if y_alias else y_col)
         if y_unit and agg_func != 'count': display_y = f"{display_y} ({y_unit})"
+
+        display_groupby = groupby_alias if groupby_alias else group_by
+        if groupby_unit: display_groupby = f"{display_groupby} ({groupby_unit})"
         
         if is_base_diff:
-            config['chartTitle'] = f"Diferencia de {display_y} respecto a la base ({threshold}) agrupado por {group_by}"
+            config['chartTitle'] = f"Diferencia de {display_y} respecto a la base ({threshold}) agrupado por {display_groupby}"
         else:
-            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {display_y} por {display_x} agrupado por {group_by}"
+            config['chartTitle'] = f"{op_display.get(agg_func, 'Datos')} de {display_y} por {display_x} agrupado por {display_groupby}"
             
         return labels, datasets, config
 
@@ -313,12 +316,17 @@ class ChartEngineOrchestrator:
         group_by = mapping.get('groupBy')
         threshold = mapping.get('threshold')
         granularity = mapping.get('granularity')
+        
         bins = mapping.get('bins')
+        groupByBins = mapping.get('groupByBins')
         
         x_alias = mapping.get('xAlias')
         y_alias = mapping.get('yAlias')
+        groupby_alias = mapping.get('groupByAlias')
+        
         x_unit = mapping.get('xUnit')
         y_unit = mapping.get('yUnit')
+        groupby_unit = mapping.get('groupByUnit')
 
         df = CSVAnalyzer._load_csv(UPLOADED_CSV_PATH)
         
@@ -332,13 +340,16 @@ class ChartEngineOrchestrator:
         df_clean = ChartDataProcessor.clean_and_format_dates(df[cols_needed], x_col, granularity)
         
         is_binned = ChartDataProcessor.apply_binning(df_clean, x_col, bins)
+        if group_by:
+            ChartDataProcessor.apply_binning(df_clean, group_by, groupByBins)
         
         config = ChartDataProcessor.autocomplete_uvl_config(config)
 
         if group_by:
             labels, datasets, config = ChartDataProcessor.process_grouped_data(
                 df_clean, x_col, y_col, group_by, agg_func, granularity, config, threshold, is_binned,
-                x_alias=x_alias, y_alias=y_alias, x_unit=x_unit, y_unit=y_unit
+                x_alias=x_alias, y_alias=y_alias, x_unit=x_unit, y_unit=y_unit,
+                groupby_alias=groupby_alias, groupby_unit=groupby_unit
             )
         else:
             labels, datasets, config = ChartDataProcessor.process_simple_data(
