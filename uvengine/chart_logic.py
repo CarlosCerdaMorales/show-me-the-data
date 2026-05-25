@@ -223,7 +223,7 @@ class ChartDataProcessor:
     def process_simple_data(cls, df_clean, x_col, y_col, agg_func, granularity, config, threshold=None, is_binned=False, x_alias=None, y_alias=None, x_unit=None, y_unit=None):
         df_grouped = df_clean.groupby(x_col, observed=False)[y_col].agg(agg_func).reset_index()
         
-        if config.get('EmphasizeLarger'):
+        if config.get('EmphasizeLarger') or config.get('NonZeroScale'):
             df_grouped = df_grouped.sort_values(by=y_col, ascending=False)
             config['SortedDesc'] = True
         elif config.get('EmphasizeSmaller'):
