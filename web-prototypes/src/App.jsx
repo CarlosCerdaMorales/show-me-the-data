@@ -2,9 +2,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-do
 import './App.css';
 
 import Home from './pages/Home';
-import FirstComparison from './pages/FirstComparison';
 import Proto from './pages/Proto';
-import TestTemporalSeries from './pages/TestTemporalSeries';
 import UserManual from './pages/UserManual';
 
 function App() {
@@ -23,11 +21,6 @@ function App() {
           flexWrap: 'wrap'
         }}>
           <NavLink to="/" style={{ color: '#111827', textDecoration: 'none', fontWeight: '500', fontSize: '15px' }}>Inicio</NavLink>
-          
-          <div style={{ display: 'flex', gap: '20px', borderLeft: '1px solid #e5e7eb', paddingLeft: '20px' }}>
-            <NavLink to="/comparativa" style={{ color: '#6b7280', textDecoration: 'none', fontSize: '15px', fontWeight: '500' }}>Test: Comparativa</NavLink>
-            <NavLink to="/test-serie-temporal" style={{ color: '#6b7280', textDecoration: 'none', fontSize: '15px', fontWeight: '500' }}>Test: Serie Temporal</NavLink>
-          </div>
 
           <div style={{ borderLeft: '1px solid #e5e7eb', paddingLeft: '20px' }}>
             <NavLink to="/prototipo" style={{ color: '#4f46e5', fontWeight: '600', textDecoration: 'none', fontSize: '15px', padding: '8px 16px', backgroundColor: '#eef2ff', borderRadius: '6px' }}>PROTOTIPO REAL</NavLink>
@@ -41,8 +34,6 @@ function App() {
         <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/comparativa" element={<FirstComparison />} />
-            <Route path="/test-serie-temporal" element={<TestTemporalSeries />} />
             <Route path="/prototipo" element={<Proto />} />
             <Route path="/manual" element={<UserManual />} />
           </Routes>
