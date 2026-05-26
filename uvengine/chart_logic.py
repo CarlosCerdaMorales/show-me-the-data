@@ -225,10 +225,8 @@ class ChartDataProcessor:
         
         if config.get('EmphasizeLarger') or config.get('NonZeroScale'):
             df_grouped = df_grouped.sort_values(by=y_col, ascending=False)
-            config['SortedDesc'] = True
         elif config.get('EmphasizeSmaller'):
             df_grouped = df_grouped.sort_values(by=y_col, ascending=True)
-            config['SortedAsc'] = True
         elif granularity or is_binned:
             df_grouped = df_grouped.sort_values(by=x_col)
 

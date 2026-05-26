@@ -6,79 +6,43 @@ features
             Relationship
                 alternative
                     Nominal
+                        mandatory
+                            CompareSizes
                     TimeSeries
+                        alternative
+                            EmphasizeIndividual
+                            ShowEvolution
                     Ranking
+                        alternative
+                            EmphasizeLarger
+                            EmphasizeSmaller
+                            NonZeroScale
                     PartToWhole
+                        alternative
+                            TouchingBars
+                            StackedBars
                     Deviation
-            
-            Intention
-                alternative
-                    // Nominal
-                    CompareSizes
-
-                    // Series Temporales
-                    EmphasizeIndividual
-                    ShowEvolution
-
-                    // Ranking
-                    EmphasizeLarger
-                    EmphasizeSmaller
-                    NonZeroScale
-
-                    // Partes de un todo 
-                    TouchingBars
-                    StackedBars
-
-                    // Desviación
-                    BaseDifference
-                    DeviationOverTime
-            
+                        alternative
+                            BaseDifference
+                            DeviationOverTime
             VisualElement
                 alternative
-                    Line    // Líneas
-                    Bar     // Barras
-                    Point   // Puntos
-
+                    Line
+                    Bar
+                    Point
         optional
             GridLines
-            Stacked         // Activa el apilado en barras
-            SortedDesc      // Ordenar mayor a menor
-            SortedAsc       // Ordenar menor a mayor
+            Stacked
 
 constraints
-    // Relación -> Intenciones disponibles
-    Nominal => CompareSizes
-    TimeSeries => EmphasizeIndividual | ShowEvolution
-    Ranking => EmphasizeLarger | EmphasizeSmaller | NonZeroScale
-    PartToWhole => TouchingBars | StackedBars
-    Deviation => BaseDifference | DeviationOverTime
-
-    // REGLA 2: Intención -> Elemento Visual y Estilo
-
-    // --- Nominal ---
     CompareSizes => Bar
-
-    // --- Series Temporales ---
     ShowEvolution => Line
     EmphasizeIndividual => Bar
-
-    // --- Ranking ---
     EmphasizeLarger => Bar
-    EmphasizeLarger => SortedDesc
-    
     EmphasizeSmaller => Bar
-    EmphasizeSmaller => SortedAsc
-    
     NonZeroScale => Point
-
-    // --- Partes de un Todo ---
-    // Opción A: Barras pegadas
     TouchingBars => Bar
-
-    // Opción B: Barras apiladas
     StackedBars => Bar
     StackedBars => Stacked
-
-    // --- Desviación ---
     BaseDifference => Bar
     DeviationOverTime => Line
